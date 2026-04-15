@@ -158,23 +158,23 @@
 
     <div class="stats">
         <div class="stat-card">
-            <h3>45</h3>
+            <h3>{{ $totalCommandes }}</h3>
             <p>Commandes totales</p>
         </div>
         <div class="stat-card">
-            <h3>12</h3>
+            <h3>{{ $commandesEnAttente }}</h3>
             <p>En attente</p>
         </div>
         <div class="stat-card">
-            <h3>25</h3>
+            <h3>{{ $totalClients }}</h3>
             <p>Clients</p>
         </div>
         <div class="stat-card">
-            <h3>8</h3>
+            <h3>{{ $totalLaveurs }}</h3>
             <p>Laveurs</p>
         </div>
         <div class="stat-card">
-            <h3>5</h3>
+            <h3>{{ $totalZones }}</h3>
             <p>Zones</p>
         </div>
     </div>
@@ -203,44 +203,27 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($commandes as $commande)
                     <tr>
-                        <td>#001</td>
-                        <td>Pierre Client</td>
-                        <td>2</td>
-                        <td>12 Rue des Clients, Paris</td>
-                        <td><span class="badge badge-demande">Demande</span></td>
+                        <td>#{{ str_pad($commande->id, 3, '0', STR_PAD_LEFT) }}</td>
+                        <td>{{ $commande->client->name }}</td>
+                        <td>{{ $commande->nombre_vehicules }}</td>
+                        <td>{{ $commande->adresse_service }}</td>
+                        <td><span class="badge badge-{{ $commande->statut }}">{{ ucfirst(str_replace('_', ' ', $commande->statut)) }}</span></td>
                         <td>
                             <div class="actions-group">
+                                @if($commande->statut === 'demande')
                                 <button class="btn btn-primary btn-small">Assigner</button>
+                                @endif
                                 <button class="btn btn-success btn-small">Voir</button>
                             </div>
                         </td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>#002</td>
-                        <td>Sophie Dupont</td>
-                        <td>1</td>
-                        <td>34 Boulevard Client, Marseille</td>
-                        <td><span class="badge badge-en-cours">En cours</span></td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-success btn-small">Voir</button>
-                            </div>
-                        </td>
+                        <td colspan="6" style="text-align: center;">Aucune commande</td>
                     </tr>
-                    <tr>
-                        <td>#003</td>
-                        <td>Agence Auto Plus</td>
-                        <td>5</td>
-                        <td>56 Avenue des Agences, Lyon</td>
-                        <td><span class="badge badge-terminee">Terminée</span></td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Paiement</button>
-                                <button class="btn btn-success btn-small">Voir</button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -129,7 +129,12 @@
                 <li><a href="/register">Inscription</a></li>
             @else
                 <li><a href="/dashboard">Tableau de bord</a></li>
-                <li><a href="/logout">Déconnexion</a></li>
+                <li>
+                    <form action="/logout" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" style="background: none; border: none; color: white; cursor: pointer; font-size: 1rem;">Déconnexion</button>
+                    </form>
+                </li>
             @endguest
         </ul>
     </nav>

@@ -178,15 +178,15 @@
 
     <div class="stats">
         <div class="stat-card">
-            <h3>5</h3>
+            <h3>{{ $totalCommandes }}</h3>
             <p>Commandes totales</p>
         </div>
         <div class="stat-card">
-            <h3>2</h3>
+            <h3>{{ $commandesEnCours }}</h3>
             <p>En cours</p>
         </div>
         <div class="stat-card">
-            <h3>3</h3>
+            <h3>{{ $commandesTerminees }}</h3>
             <p>Terminées</p>
         </div>
     </div>
@@ -213,32 +213,18 @@
     <div class="commandes-list">
         <h2>Mes dernières commandes</h2>
         
+        @forelse($dernieresCommandes as $commande)
         <div class="commande-item">
             <div class="commande-header">
-                <strong>Commande #001</strong>
-                <span class="badge badge-en-cours">En cours</span>
+                <strong>Commande #{{ str_pad($commande->id, 3, '0', STR_PAD_LEFT) }}</strong>
+                <span class="badge badge-{{ $commande->statut }}">{{ ucfirst(str_replace('_', ' ', $commande->statut)) }}</span>
             </div>
-            <p>2 véhicules - 15 Rue de Paris, 75001 Paris</p>
-            <p><small>Date: 15/01/2026</small></p>
+            <p>{{ $commande->nombre_vehicules }} véhicule(s) - {{ $commande->adresse_service }}</p>
+            <p><small>Date: {{ $commande->created_at->format('d/m/Y') }}</small></p>
         </div>
-
-        <div class="commande-item">
-            <div class="commande-header">
-                <strong>Commande #002</strong>
-                <span class="badge badge-assignee">Assignée</span>
-            </div>
-            <p>1 véhicule - 45 Avenue des Champs, 75008 Paris</p>
-            <p><small>Date: 14/01/2026</small></p>
-        </div>
-
-        <div class="commande-item">
-            <div class="commande-header">
-                <strong>Commande #003</strong>
-                <span class="badge badge-terminee">Terminée</span>
-            </div>
-            <p>3 véhicules - 78 Boulevard Saint-Michel, 75006 Paris</p>
-            <p><small>Date: 10/01/2026</small></p>
-        </div>
+        @empty
+        <p>Aucune commande pour le moment. Créez votre première commande !</p>
+        @endforelse
     </div>
 </div>
 
@@ -267,9 +253,9 @@
                 <label for="zone_id">Zone géographique</label>
                 <select id="zone_id" name="zone_id">
                     <option value="">Sélectionner une zone</option>
-                    <option value="1">Paris Centre</option>
-                    <option value="2">Paris Nord</option>
-                    <option value="3">Lyon Centre</option>
+                    @foreach($zones as $zone)
+                    <option value="{{ $zone->id }}">{{ $zone->nom }} - {{ $zone->ville }}</option>
+                    @endforeach
                 </select>
             </div>
 

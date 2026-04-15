@@ -145,19 +145,19 @@
 
     <div class="stats">
         <div class="stat-card">
-            <h3>12</h3>
+            <h3>{{ $totalMissions }}</h3>
             <p>Missions totales</p>
         </div>
         <div class="stat-card">
-            <h3>3</h3>
+            <h3>{{ $missionsEnCours }}</h3>
             <p>Missions en cours</p>
         </div>
         <div class="stat-card">
-            <h3>4.5</h3>
+            <h3>{{ number_format($noteMoyenne, 1) }}</h3>
             <p>Note moyenne</p>
         </div>
         <div class="stat-card">
-            <h3>850€</h3>
+            <h3>-</h3>
             <p>Revenus du mois</p>
         </div>
     </div>
@@ -165,78 +165,57 @@
     <div class="missions-list">
         <h2>Mes missions</h2>
         
+        @forelse($missions as $mission)
         <div class="mission-item">
             <div class="mission-header">
-                <strong>Mission #M001</strong>
-                <span class="badge badge-assignee">Assignée</span>
+                <strong>Mission #M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</strong>
+                <span class="badge badge-{{ $mission->statut }}">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span>
             </div>
             <div class="mission-info">
-                <p><strong>Client:</strong> Pierre Client</p>
-                <p><strong>Adresse:</strong> 12 Rue des Clients, 75001 Paris</p>
-                <p><strong>Véhicules:</strong> 2</p>
-                <p><strong>Date:</strong> 16/01/2026 à 14h00</p>
+                <p><strong>Client:</strong> {{ $mission->commande->client->name }}</p>
+                <p><strong>Adresse:</strong> {{ $mission->commande->adresse_service }}</p>
+                <p><strong>Véhicules:</strong> {{ $mission->commande->nombre_vehicules }}</p>
+                <p><strong>Date:</strong> {{ $mission->created_at->format('d/m/Y à H:i') }}</p>
+                @if($mission->temps_passe)
+                <p><strong>Temps passé:</strong> {{ $mission->temps_passe }} minutes</p>
+                @endif
             </div>
             <div class="mission-actions">
+                @if($mission->statut === 'assignee')
                 <button class="btn btn-success">Démarrer</button>
-                <button class="btn btn-primary">Voir détails</button>
-            </div>
-        </div>
-
-        <div class="mission-item">
-            <div class="mission-header">
-                <strong>Mission #M002</strong>
-                <span class="badge badge-en-cours">En cours</span>
-            </div>
-            <div class="mission-info">
-                <p><strong>Client:</strong> Sophie Dupont</p>
-                <p><strong>Adresse:</strong> 34 Boulevard Client, 13001 Marseille</p>
-                <p><strong>Véhicules:</strong> 1</p>
-                <p><strong>Date:</strong> 15/01/2026 à 10h00</p>
-            </div>
-            <div class="mission-actions">
+                @elseif($mission->statut === 'en_cours')
                 <button class="btn btn-success">Terminer</button>
+                @endif
                 <button class="btn btn-primary">Voir détails</button>
             </div>
         </div>
-
-        <div class="mission-item">
-            <div class="mission-header">
-                <strong>Mission #M003</strong>
-                <span class="badge badge-terminee">Terminée</span>
-            </div>
-            <div class="mission-info">
-                <p><strong>Client:</strong> Agence Auto Plus</p>
-                <p><strong>Adresse:</strong> 56 Avenue des Agences, 69001 Lyon</p>
-                <p><strong>Véhicules:</strong> 5</p>
-                <p><strong>Date:</strong> 14/01/2026</p>
-                <p><strong>Temps passé:</strong> 180 minutes</p>
-            </div>
-            <div class="mission-actions">
-                <button class="btn btn-primary">Voir détails</button>
-            </div>
-        </div>
+        @empty
+        <p>Aucune mission pour le moment.</p>
+        @endforelse
     </div>
 
     <div class="evaluations">
         <h2>Mes évaluations</h2>
         
+        @forelse($dernieresEvaluations as $evaluation)
         <div class="evaluation-item">
-            <div class="stars">★★★★★</div>
-            <p><strong>Pierre Client</strong> - 15/01/2026</p>
-            <p>"Excellent travail, très professionnel !"</p>
+            <div class="stars">
+                @for($i = 1; $i <= 5; $i++)
+                    @if($i <= $evaluation->note)
+                        ★
+                    @else
+                        ☆
+                    @endif
+                @endfor
+            </div>
+            <p><strong>{{ $evaluation->client->name }}</strong> - {{ $evaluation->created_at->format('d/m/Y') }}</p>
+            @if($evaluation->commentaire)
+            <p>"{{ $evaluation->commentaire }}"</p>
+            @endif
         </div>
-
-        <div class="evaluation-item">
-            <div class="stars">★★★★☆</div>
-            <p><strong>Sophie Dupont</strong> - 12/01/2026</p>
-            <p>"Bon service, rapide et efficace."</p>
-        </div>
-
-        <div class="evaluation-item">
-            <div class="stars">★★★★★</div>
-            <p><strong>Agence Auto Plus</strong> - 10/01/2026</p>
-            <p>"Parfait ! Nous recommandons."</p>
-        </div>
+        @empty
+        <p>Aucune évaluation pour le moment.</p>
+        @endforelse
     </div>
 </div>
 @endsection
