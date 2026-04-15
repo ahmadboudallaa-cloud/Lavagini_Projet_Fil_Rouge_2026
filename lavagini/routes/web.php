@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Web\WebAuthController;
+use App\Http\Controllers\Web\WebCommandeController;
+use App\Http\Controllers\Web\WebDashboardController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -9,42 +11,43 @@ Route::get('/', function () {
 });
 
 // Routes d'authentification
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::get('/register', function () {
-    return view('auth.register');
-});
+Route::get('/login', [WebAuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [WebAuthController::class, 'login']);
+Route::get('/register', [WebAuthController::class, 'showRegister']);
+Route::post('/register', [WebAuthController::class, 'register']);
+Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 // Routes protégées
 Route::middleware('auth')->group(function () {
     
     // Redirection vers le dashboard selon le rôle
     Route::get('/dashboard', function () {
-        $user = Auth::user();
+        $user = auth()->user();
         
         if ($user->role === 'admin') {
-            return view('admin.dashboard');
+            return redirect('/admin/dashboard');
         } elseif ($user->role === 'laveur') {
-            return view('laveur.dashboard');
+            return redirect('/laveur/dashboard');
         } else {
-            return view('client.dashboard');
+            return redirect('/client/dashboard');
         }
     });
     
-    // Dashboard Client
-    Route::get('/client/dashboard', function () {
-        return view('client.dashboard');
-    })->middleware('role:client');
+    // Routes Client
+    Route::middleware('role:client')->group(function () {
+        Route::get('/client/dashboard', [WebDashboardController::class, 'clientDashboard']);
+        Route::post('/commandes', [WebCommandeController::class, 'store']);
+        Route::get('/commandes/mes-commandes', [WebCommandeController::class, 'mesCommandes']);
+        Route::get('/commandes/{id}', [WebCommandeController::class, 'show']);
+    });
     
-    // Dashboard Laveur
-    Route::get('/laveur/dashboard', function () {
-        return view('laveur.dashboard');
-    })->middleware('role:laveur');
+    // Routes Laveur
+    Route::middleware('role:laveur')->group(function () {
+        Route::get('/laveur/dashboard', [WebDashboardController::class, 'laveurDashboard']);
+    });
     
-    // Dashboard Admin
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->middleware('role:admin');
+    // Routes Admin
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/dashboard', [WebDashboardController::class, 'adminDashboard']);
+    });
 });
