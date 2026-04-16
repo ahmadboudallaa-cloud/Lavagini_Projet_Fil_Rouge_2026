@@ -9,6 +9,8 @@ class ZoneGeographique extends Model
 {
     use HasFactory;
 
+    protected $table = 'zones_geographiques';
+
     protected $fillable = [
         'nom',
         'ville',
