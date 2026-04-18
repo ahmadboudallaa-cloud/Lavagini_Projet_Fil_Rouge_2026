@@ -243,11 +243,11 @@
     </div>
 
     <div class="tabs">
-        <button class="tab active" onclick="showTab('commandes')">Commandes</button>
-        <button class="tab" onclick="showTab('missions')">Missions</button>
-        <button class="tab" onclick="showTab('clients')">Clients</button>
-        <button class="tab" onclick="showTab('laveurs')">Laveurs</button>
-        <button class="tab" onclick="showTab('zones')">Zones</button>
+        <button class="tab active" onclick="showTab('commandes')" data-tab="commandes">Commandes</button>
+        <button class="tab" onclick="showTab('missions')" data-tab="missions">Missions</button>
+        <button class="tab" onclick="showTab('clients')" data-tab="clients">Clients</button>
+        <button class="tab" onclick="showTab('laveurs')" data-tab="laveurs">Laveurs</button>
+        <button class="tab" onclick="showTab('zones')" data-tab="zones">Zones</button>
     </div>
 
     <!-- Tab Commandes -->
@@ -556,6 +556,7 @@
 
 @section('scripts')
 <script>
+    // Sauvegarder l'onglet actif dans localStorage
     function showTab(tabName) {
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(content => content.classList.remove('active'));
@@ -565,7 +566,38 @@
 
         document.getElementById(tabName).classList.add('active');
         event.target.classList.add('active');
+        
+        // Sauvegarder l'onglet actif
+        localStorage.setItem('activeTab', tabName);
     }
+
+    // Restaurer l'onglet actif au chargement de la page
+    window.addEventListener('DOMContentLoaded', function() {
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            // Cacher tous les contenus
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Désactiver tous les tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Activer l'onglet sauvegardé
+            const tabContent = document.getElementById(activeTab);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+            
+            // Activer le bouton correspondant
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(button => {
+                if (button.getAttribute('data-tab') === activeTab) {
+                    button.classList.add('active');
+                }
+            });
+        }
+    });
 
     function openLaveurModal() {
         document.getElementById('laveurModal').style.display = 'block';
