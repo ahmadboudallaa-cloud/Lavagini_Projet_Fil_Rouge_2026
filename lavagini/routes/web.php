@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\WebAuthController;
 use App\Http\Controllers\Web\WebCommandeController;
 use App\Http\Controllers\Web\WebDashboardController;
+use App\Http\Controllers\Web\WebAdminController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -49,5 +50,23 @@ Route::middleware('auth')->group(function () {
     // Routes Admin
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/dashboard', [WebDashboardController::class, 'adminDashboard']);
+        
+        // CRUD Laveurs
+        Route::post('/admin/laveurs', [WebAdminController::class, 'creerLaveur']);
+        Route::post('/admin/laveurs/{id}', [WebAdminController::class, 'modifierLaveur']);
+        Route::delete('/admin/laveurs/{id}', [WebAdminController::class, 'supprimerLaveur']);
+        
+        // CRUD Clients
+        Route::post('/admin/clients/{id}', [WebAdminController::class, 'modifierClient']);
+        Route::delete('/admin/clients/{id}', [WebAdminController::class, 'supprimerClient']);
+        
+        // CRUD Zones
+        Route::post('/admin/zones', [WebAdminController::class, 'creerZone']);
+        Route::post('/admin/zones/{id}', [WebAdminController::class, 'modifierZone']);
+        Route::delete('/admin/zones/{id}', [WebAdminController::class, 'supprimerZone']);
+        
+        // Gestion des commandes
+        Route::post('/admin/missions/assigner', [WebAdminController::class, 'assignerMission']);
+        Route::get('/admin/commandes/{id}', [WebAdminController::class, 'voirCommande']);
     });
 });
