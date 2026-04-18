@@ -350,6 +350,7 @@
                         <td>{{ $client->telephone ?? 'N/A' }}</td>
                         <td>
                             <div class="actions-group">
+                                <button class="btn btn-primary btn-small" onclick="openModifierClientModal({{ $client->id }}, '{{ $client->name }}', '{{ $client->email }}', '{{ $client->telephone }}', '{{ $client->adresse }}', '{{ $client->type_client }}')">Modifier</button>
                                 <form action="/admin/clients/{{ $client->id }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
@@ -392,6 +393,7 @@
                         <td>{{ $laveur->telephone ?? 'N/A' }}</td>
                         <td>
                             <div class="actions-group">
+                                <button class="btn btn-primary btn-small" onclick="openModifierLaveurModal({{ $laveur->id }}, '{{ $laveur->name }}', '{{ $laveur->email }}', '{{ $laveur->telephone }}', '{{ $laveur->adresse }}')">Modifier</button>
                                 <form action="/admin/laveurs/{{ $laveur->id }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
@@ -434,6 +436,7 @@
                         <td>{{ $zone->code_postal }}</td>
                         <td>
                             <div class="actions-group">
+                                <button class="btn btn-primary btn-small" onclick="openModifierZoneModal({{ $zone->id }}, '{{ $zone->nom }}', '{{ $zone->ville }}', '{{ $zone->code_postal }}')">Modifier</button>
                                 <form action="/admin/zones/{{ $zone->id }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
@@ -552,6 +555,122 @@
         </form>
     </div>
 </div>
+
+<!-- Modal Modifier Client -->
+<div id="modifierClientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Modifier un client</h2>
+            <span class="close" onclick="closeModifierClientModal()">&times;</span>
+        </div>
+        
+        <form id="formModifierClient" method="POST">
+            @csrf
+            
+            <div class="form-group">
+                <label for="client_name">Nom complet</label>
+                <input type="text" id="client_name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="client_email">Email</label>
+                <input type="email" id="client_email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="client_telephone">Téléphone</label>
+                <input type="tel" id="client_telephone" name="telephone">
+            </div>
+
+            <div class="form-group">
+                <label for="client_adresse">Adresse</label>
+                <input type="text" id="client_adresse" name="adresse">
+            </div>
+
+            <div class="form-group">
+                <label for="client_type">Type de client</label>
+                <select id="client_type" name="type_client">
+                    <option value="particulier">Particulier</option>
+                    <option value="agence">Agence</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Modifier le client</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Modifier Laveur -->
+<div id="modifierLaveurModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Modifier un laveur</h2>
+            <span class="close" onclick="closeModifierLaveurModal()">&times;</span>
+        </div>
+        
+        <form id="formModifierLaveur" method="POST">
+            @csrf
+            
+            <div class="form-group">
+                <label for="laveur_name">Nom complet</label>
+                <input type="text" id="laveur_name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="laveur_email">Email</label>
+                <input type="email" id="laveur_email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="laveur_password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                <input type="password" id="laveur_password" name="password">
+            </div>
+
+            <div class="form-group">
+                <label for="laveur_telephone">Téléphone</label>
+                <input type="tel" id="laveur_telephone" name="telephone">
+            </div>
+
+            <div class="form-group">
+                <label for="laveur_adresse">Adresse</label>
+                <input type="text" id="laveur_adresse" name="adresse">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Modifier le laveur</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Modifier Zone -->
+<div id="modifierZoneModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Modifier une zone</h2>
+            <span class="close" onclick="closeModifierZoneModal()">&times;</span>
+        </div>
+        
+        <form id="formModifierZone" method="POST">
+            @csrf
+            
+            <div class="form-group">
+                <label for="zone_nom">Nom de la zone</label>
+                <input type="text" id="zone_nom" name="nom" required>
+            </div>
+
+            <div class="form-group">
+                <label for="zone_ville">Ville</label>
+                <input type="text" id="zone_ville" name="ville" required>
+            </div>
+
+            <div class="form-group">
+                <label for="zone_code_postal">Code postal</label>
+                <input type="text" id="zone_code_postal" name="code_postal" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Modifier la zone</button>
+        </form>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -622,6 +741,49 @@
 
     function closeAssignerModal() {
         document.getElementById('assignerModal').style.display = 'none';
+    }
+
+    // Fonctions pour modifier un client
+    function openModifierClientModal(id, name, email, telephone, adresse, type_client) {
+        document.getElementById('formModifierClient').action = '/admin/clients/' + id;
+        document.getElementById('client_name').value = name;
+        document.getElementById('client_email').value = email;
+        document.getElementById('client_telephone').value = telephone || '';
+        document.getElementById('client_adresse').value = adresse || '';
+        document.getElementById('client_type').value = type_client || 'particulier';
+        document.getElementById('modifierClientModal').style.display = 'block';
+    }
+
+    function closeModifierClientModal() {
+        document.getElementById('modifierClientModal').style.display = 'none';
+    }
+
+    // Fonctions pour modifier un laveur
+    function openModifierLaveurModal(id, name, email, telephone, adresse) {
+        document.getElementById('formModifierLaveur').action = '/admin/laveurs/' + id;
+        document.getElementById('laveur_name').value = name;
+        document.getElementById('laveur_email').value = email;
+        document.getElementById('laveur_telephone').value = telephone || '';
+        document.getElementById('laveur_adresse').value = adresse || '';
+        document.getElementById('laveur_password').value = '';
+        document.getElementById('modifierLaveurModal').style.display = 'block';
+    }
+
+    function closeModifierLaveurModal() {
+        document.getElementById('modifierLaveurModal').style.display = 'none';
+    }
+
+    // Fonctions pour modifier une zone
+    function openModifierZoneModal(id, nom, ville, code_postal) {
+        document.getElementById('formModifierZone').action = '/admin/zones/' + id;
+        document.getElementById('zone_nom').value = nom;
+        document.getElementById('zone_ville').value = ville;
+        document.getElementById('zone_code_postal').value = code_postal;
+        document.getElementById('modifierZoneModal').style.display = 'block';
+    }
+
+    function closeModifierZoneModal() {
+        document.getElementById('modifierZoneModal').style.display = 'none';
     }
 
     window.onclick = function(event) {
