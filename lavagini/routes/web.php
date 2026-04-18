@@ -38,8 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:client')->group(function () {
         Route::get('/client/dashboard', [WebDashboardController::class, 'clientDashboard']);
         Route::post('/commandes', [WebCommandeController::class, 'store']);
-        Route::get('/commandes/mes-commandes', [WebCommandeController::class, 'mesCommandes']);
-        Route::get('/commandes/{id}', [WebCommandeController::class, 'show']);
+        Route::get('/client/commandes', [WebCommandeController::class, 'mesCommandes']);
+        Route::get('/client/commandes/{id}', [WebCommandeController::class, 'show']);
+        Route::post('/client/evaluations/{commandeId}', [WebCommandeController::class, 'creerEvaluation']);
     });
     
     // Routes Laveur

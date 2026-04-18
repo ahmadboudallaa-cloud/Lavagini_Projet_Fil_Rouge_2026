@@ -67,4 +67,53 @@ class WebCommandeController extends Controller
 
         return view('client.commande-detail', compact('commande'));
     }
+
+    // Créer une évaluation
+    public function creerEvaluation(Request $request, $commandeId)
+    {
+        $request->validate([
+            'note' => 'required|integer|min:1|max:5',
+            'commentaire' => 'nullable|string'
+        ]);
+
+        $commande = Commande::findOrFail($commandeId);
+        
+        // Vérifier que la commande appartient au client
+        if ($commande->client_id != Auth::id()) {
+            return redirect('/client/dashboard')->with('error', 'Non autorisé');
+        }
+
+        // Vérifier que la commande est terminée
+        if ($commande->statut != 'terminee' && $commande->statut != 'payee') {
+            return redirect('/client/dashboard')->with('error', 'La commande doit être terminée');
+        }
+
+        // Vérifier qu'il y a une mission
+        if (!$commande->mission) {
+            return redirect('/client/dashboard')->with('error', 'Aucune mission trouvée');
+        }
+
+        // Vérifier si une évaluation existe déjà
+        if ($commande->evaluation) {
+            return redirect('/client/dashboard')->with('error', 'Vous avez déjà évalué cette commande');
+        }
+
+        $evaluation = \App\Models\Evaluation::create([
+            'commande_id' => $commandeId,
+            'laveur_id' => $commande->mission->laveur_id,
+            'client_id' => Auth::id(),
+            'note' => $request->note,
+            'commentaire' => $request->commentaire
+        ]);
+
+        // Notification au laveur
+        \App\Models\Notification::create([
+            'user_id' => $commande->mission->laveur_id,
+            'titre' => 'Nouvelle évaluation',
+            'message' => 'Vous avez reçu une note de ' . $request->note . '/5',
+            'type' => 'evaluation'
+        ]);
+
+        return redirect('/client/dashboard')->with('success', 'Évaluation créée avec succès !');
+    }
 }
