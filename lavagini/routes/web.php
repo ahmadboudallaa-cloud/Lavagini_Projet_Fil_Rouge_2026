@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\WebAuthController;
 use App\Http\Controllers\Web\WebCommandeController;
 use App\Http\Controllers\Web\WebDashboardController;
 use App\Http\Controllers\Web\WebAdminController;
+use App\Http\Controllers\Web\WebMissionController;
 
 // Page d'accueil
 Route::get('/', function () {
@@ -46,6 +47,10 @@ Route::middleware('auth')->group(function () {
     // Routes Laveur
     Route::middleware('role:laveur')->group(function () {
         Route::get('/laveur/dashboard', [WebDashboardController::class, 'laveurDashboard']);
+        Route::post('/laveur/missions/{id}/demarrer', [WebMissionController::class, 'demarrer']);
+        Route::get('/laveur/missions/{id}/terminer', [WebMissionController::class, 'showTerminer']);
+        Route::post('/laveur/missions/{id}/terminer', [WebMissionController::class, 'terminer']);
+        Route::get('/laveur/missions/{id}', [WebMissionController::class, 'show']);
     });
     
     // Routes Admin
