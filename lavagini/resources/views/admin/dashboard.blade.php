@@ -122,7 +122,7 @@
         color: #0984e3;
     }
 
-    .badge-en-cours {
+    .badge-en_cours {
         background-color: #fdcb6e;
         color: #e17055;
     }
@@ -145,6 +145,69 @@
     .actions-group {
         display: flex;
         gap: 0.5rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        background: white;
+        max-width: 600px;
+        margin: 3rem auto;
+        padding: 2rem;
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .close {
+        font-size: 2rem;
+        cursor: pointer;
+        color: #999;
+    }
+
+    .close:hover {
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .btn-full {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
     }
 </style>
 @endsection
@@ -213,9 +276,9 @@
                         <td>
                             <div class="actions-group">
                                 @if($commande->statut === 'demande')
-                                <button class="btn btn-primary btn-small">Assigner</button>
+                                <button class="btn btn-primary btn-small" onclick="openAssignerModal({{ $commande->id }})">Assigner</button>
                                 @endif
-                                <button class="btn btn-success btn-small">Voir</button>
+                                <a href="/admin/commandes/{{ $commande->id }}" class="btn btn-success btn-small">Voir</a>
                             </div>
                         </td>
                     </tr>
@@ -241,30 +304,22 @@
                         <th>Laveur</th>
                         <th>Statut</th>
                         <th>Date</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($missions as $mission)
                     <tr>
-                        <td>#M001</td>
-                        <td>#001</td>
-                        <td>Jean Laveur</td>
-                        <td><span class="badge badge-assignee">Assignée</span></td>
-                        <td>16/01/2026</td>
-                        <td>
-                            <button class="btn btn-success btn-small">Voir</button>
-                        </td>
+                        <td>#M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</td>
+                        <td>#{{ str_pad($mission->commande_id, 3, '0', STR_PAD_LEFT) }}</td>
+                        <td>{{ $mission->laveur->name }}</td>
+                        <td><span class="badge badge-{{ $mission->statut }}">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span></td>
+                        <td>{{ $mission->created_at->format('d/m/Y') }}</td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>#M002</td>
-                        <td>#002</td>
-                        <td>Marie Nettoyage</td>
-                        <td><span class="badge badge-en-cours">En cours</span></td>
-                        <td>15/01/2026</td>
-                        <td>
-                            <button class="btn btn-success btn-small">Voir</button>
-                        </td>
+                        <td colspan="5" style="text-align: center;">Aucune mission</td>
                     </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -286,45 +341,28 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($clients as $client)
                     <tr>
-                        <td>1</td>
-                        <td>Pierre Client</td>
-                        <td>pierre@example.com</td>
-                        <td>Particulier</td>
-                        <td>0645678901</td>
+                        <td>{{ $client->id }}</td>
+                        <td>{{ $client->name }}</td>
+                        <td>{{ $client->email }}</td>
+                        <td>{{ ucfirst($client->type_client ?? 'N/A') }}</td>
+                        <td>{{ $client->telephone ?? 'N/A' }}</td>
                         <td>
                             <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
+                                <form action="/admin/clients/{{ $client->id }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>2</td>
-                        <td>Sophie Dupont</td>
-                        <td>sophie@example.com</td>
-                        <td>Particulier</td>
-                        <td>0656789012</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
-                            </div>
-                        </td>
+                        <td colspan="6" style="text-align: center;">Aucun client</td>
                     </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Agence Auto Plus</td>
-                        <td>agence@example.com</td>
-                        <td>Agence</td>
-                        <td>0667890123</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -334,7 +372,7 @@
     <div id="laveurs" class="tab-content">
         <div class="data-table">
             <h2>Gestion des laveurs</h2>
-            <button class="btn btn-success" style="margin-bottom: 1rem;">Ajouter un laveur</button>
+            <button class="btn btn-success" style="margin-bottom: 1rem;" onclick="openLaveurModal()">Ajouter un laveur</button>
             <table>
                 <thead>
                     <tr>
@@ -342,37 +380,31 @@
                         <th>Nom</th>
                         <th>Email</th>
                         <th>Téléphone</th>
-                        <th>Note moyenne</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($laveurs as $laveur)
                     <tr>
-                        <td>1</td>
-                        <td>Jean Laveur</td>
-                        <td>jean@lavagini.com</td>
-                        <td>0623456789</td>
-                        <td>4.5 ⭐</td>
+                        <td>{{ $laveur->id }}</td>
+                        <td>{{ $laveur->name }}</td>
+                        <td>{{ $laveur->email }}</td>
+                        <td>{{ $laveur->telephone ?? 'N/A' }}</td>
                         <td>
                             <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
+                                <form action="/admin/laveurs/{{ $laveur->id }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>2</td>
-                        <td>Marie Nettoyage</td>
-                        <td>marie@lavagini.com</td>
-                        <td>0634567890</td>
-                        <td>4.8 ⭐</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
-                            </div>
-                        </td>
+                        <td colspan="5" style="text-align: center;">Aucun laveur</td>
                     </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -382,7 +414,7 @@
     <div id="zones" class="tab-content">
         <div class="data-table">
             <h2>Gestion des zones géographiques</h2>
-            <button class="btn btn-success" style="margin-bottom: 1rem;">Ajouter une zone</button>
+            <button class="btn btn-success" style="margin-bottom: 1rem;" onclick="openZoneModal()">Ajouter une zone</button>
             <table>
                 <thead>
                     <tr>
@@ -394,45 +426,130 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($zones as $zone)
                     <tr>
-                        <td>1</td>
-                        <td>Paris Centre</td>
-                        <td>Paris</td>
-                        <td>75001</td>
+                        <td>{{ $zone->id }}</td>
+                        <td>{{ $zone->nom }}</td>
+                        <td>{{ $zone->ville }}</td>
+                        <td>{{ $zone->code_postal }}</td>
                         <td>
                             <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
+                                <form action="/admin/zones/{{ $zone->id }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>2</td>
-                        <td>Paris Nord</td>
-                        <td>Paris</td>
-                        <td>75018</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
-                            </div>
-                        </td>
+                        <td colspan="5" style="text-align: center;">Aucune zone</td>
                     </tr>
-                    <tr>
-                        <td>3</td>
-                td>Lyon Centre</td>
-                        <td>Lyon</td>
-                        <td>69001</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small">Modifier</button>
-                                <button class="btn btn-danger btn-small">Supprimer</button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<!-- Modal Ajouter Laveur -->
+<div id="laveurModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Ajouter un laveur</h2>
+            <span class="close" onclick="closeLaveurModal()">&times;</span>
+        </div>
+        
+        <form action="/admin/laveurs" method="POST">
+            @csrf
+            
+            <div class="form-group">
+                <label for="name">Nom complet</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" name="telephone">
+            </div>
+
+            <div class="form-group">
+                <label for="adresse">Adresse</label>
+                <input type="text" id="adresse" name="adresse">
+            </div>
+
+            <button type="submit" class="btn btn-success btn-full">Créer le laveur</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Ajouter Zone -->
+<div id="zoneModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Ajouter une zone</h2>
+            <span class="close" onclick="closeZoneModal()">&times;</span>
+        </div>
+        
+        <form action="/admin/zones" method="POST">
+            @csrf
+            
+            <div class="form-group">
+                <label for="nom">Nom de la zone</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ville">Ville</label>
+                <input type="text" id="ville" name="ville" required>
+            </div>
+
+            <div class="form-group">
+                <label for="code_postal">Code postal</label>
+                <input type="text" id="code_postal" name="code_postal" required>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-full">Créer la zone</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Assigner Mission -->
+<div id="assignerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Assigner un laveur</h2>
+            <span class="close" onclick="closeAssignerModal()">&times;</span>
+        </div>
+        
+        <form action="/admin/missions/assigner" method="POST">
+            @csrf
+            
+            <input type="hidden" id="commande_id" name="commande_id">
+
+            <div class="form-group">
+                <label for="laveur_id">Sélectionner un laveur</label>
+                <select id="laveur_id" name="laveur_id" required>
+                    <option value="">Choisir un laveur</option>
+                    @foreach($laveurs as $laveur)
+                    <option value="{{ $laveur->id }}">{{ $laveur->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Assigner la mission</button>
+        </form>
     </div>
 </div>
 @endsection
@@ -440,17 +557,45 @@
 @section('scripts')
 <script>
     function showTab(tabName) {
-        // Cacher tous les contenus
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(content => content.classList.remove('active'));
 
-        // Désactiver tous les tabs
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => tab.classList.remove('active'));
 
-        // Activer le tab sélectionné
         document.getElementById(tabName).classList.add('active');
         event.target.classList.add('active');
+    }
+
+    function openLaveurModal() {
+        document.getElementById('laveurModal').style.display = 'block';
+    }
+
+    function closeLaveurModal() {
+        document.getElementById('laveurModal').style.display = 'none';
+    }
+
+    function openZoneModal() {
+        document.getElementById('zoneModal').style.display = 'block';
+    }
+
+    function closeZoneModal() {
+        document.getElementById('zoneModal').style.display = 'none';
+    }
+
+    function openAssignerModal(commandeId) {
+        document.getElementById('commande_id').value = commandeId;
+        document.getElementById('assignerModal').style.display = 'block';
+    }
+
+    function closeAssignerModal() {
+        document.getElementById('assignerModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
     }
 </script>
 @endsection
