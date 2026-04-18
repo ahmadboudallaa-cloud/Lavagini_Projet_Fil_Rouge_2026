@@ -182,11 +182,14 @@
             </div>
             <div class="mission-actions">
                 @if($mission->statut === 'assignee')
-                <button class="btn btn-success">Démarrer</button>
+                <form action="/laveur/missions/{{ $mission->id }}/demarrer" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-success">Démarrer</button>
+                </form>
                 @elseif($mission->statut === 'en_cours')
-                <button class="btn btn-success">Terminer</button>
+                <a href="/laveur/missions/{{ $mission->id }}/terminer" class="btn btn-success">Terminer</a>
                 @endif
-                <button class="btn btn-primary">Voir détails</button>
+                <a href="/laveur/missions/{{ $mission->id }}" class="btn btn-primary">Voir détails</a>
             </div>
         </div>
         @empty
