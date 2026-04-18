@@ -196,10 +196,10 @@
             <h3>🚗 Nouvelle commande</h3>
             <p>Réserver un lavage</p>
         </div>
-        <div class="action-card">
+        <a href="/client/commandes" class="action-card" style="text-decoration: none; color: inherit;">
             <h3>📋 Mes commandes</h3>
             <p>Voir l'historique</p>
-        </div>
+        </a>
         <div class="action-card">
             <h3>💳 Paiements</h3>
             <p>Gérer les paiements</p>
