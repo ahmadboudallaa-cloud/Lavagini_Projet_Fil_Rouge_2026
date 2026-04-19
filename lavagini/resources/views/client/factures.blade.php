@@ -78,7 +78,7 @@
             </div>
             <div>
                 <div class="facture-montant">{{ $facture->montant }}€</div>
-                <button class="btn btn-primary btn-small" style="margin-top: 1rem;">Télécharger PDF</button>
+                <a href="/factures/{{ $facture->id }}/telecharger" class="btn btn-primary btn-small" style="margin-top: 1rem;">Télécharger PDF</a>
             </div>
         </div>
         @empty

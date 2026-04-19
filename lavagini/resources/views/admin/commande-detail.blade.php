@@ -300,6 +300,15 @@
             <span class="info-value">{{ $commande->paiement->date_paiement->format('d/m/Y à H:i') }}</span>
         </div>
         @endif
+        @if($commande->facture)
+        <div class="info-row">
+            <span class="info-label">Facture :</span>
+            <span class="info-value">
+                {{ $commande->facture->numero_facture }}
+                <a href="/factures/{{ $commande->facture->id }}/telecharger" class="btn btn-primary btn-small" style="margin-left: 1rem;">Télécharger PDF</a>
+            </span>
+        </div>
+        @endif
     </div>
     @endif
 
