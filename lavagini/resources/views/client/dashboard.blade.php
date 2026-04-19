@@ -245,6 +245,15 @@
             </div>
 
             <div class="form-group">
+                <label for="type_service">Type de service</label>
+                <select id="type_service" name="type_service" required onchange="calculerMontant()">
+                    <option value="lavage_standard">Lavage Standard - 25€/véhicule</option>
+                    <option value="lavage_complet">Lavage Complet - 45€/véhicule</option>
+                    <option value="lavage_premium">Lavage Premium - 65€/véhicule</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="adresse_service">Adresse du service</label>
                 <input type="text" id="adresse_service" name="adresse_service" required>
             </div>
@@ -272,6 +281,11 @@
                 <input type="text" id="description" name="description">
             </div>
 
+            <div class="form-group">
+                <label>Montant estimé :</label>
+                <p id="montant_estime" style="font-size: 1.5rem; color: #27ae60; font-weight: bold;">25€</p>
+            </div>
+
             <button type="submit" class="btn btn-primary btn-full">Créer la commande</button>
         </form>
     </div>
@@ -287,6 +301,25 @@
     function closeModal() {
         document.getElementById('commandeModal').style.display = 'none';
     }
+
+    function calculerMontant() {
+        const nbVehicules = document.getElementById('nombre_vehicules').value || 1;
+        const typeService = document.getElementById('type_service').value;
+        
+        const tarifs = {
+            'lavage_standard': 25,
+            'lavage_complet': 45,
+            'lavage_premium': 65
+        };
+        
+        const montant = nbVehicules * tarifs[typeService];
+        document.getElementById('montant_estime').textContent = montant + '€';
+    }
+
+    // Calculer le montant quand le nombre de véhicules change
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('nombre_vehicules').addEventListener('input', calculerMontant);
+    });
 
     window.onclick = function(event) {
         const modal = document.getElementById('commandeModal');

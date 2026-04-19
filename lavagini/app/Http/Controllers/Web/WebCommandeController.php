@@ -17,18 +17,25 @@ class WebCommandeController extends Controller
         $request->validate([
             'zone_id' => 'nullable|exists:zones_geographiques,id',
             'nombre_vehicules' => 'required|integer|min:1',
+            'type_service' => 'required|in:lavage_standard,lavage_complet,lavage_premium',
             'adresse_service' => 'required|string',
             'mode_paiement' => 'required|in:en_ligne,fin_service',
             'description' => 'nullable|string'
         ]);
 
+        // Calculer le montant automatiquement
+        $tarif = \App\Models\Tarif::where('type_service', $request->type_service)->first();
+        $montant = $tarif ? ($tarif->prix_unitaire * $request->nombre_vehicules) : 0;
+
         $commande = Commande::create([
             'client_id' => Auth::id(),
             'zone_id' => $request->zone_id,
             'nombre_vehicules' => $request->nombre_vehicules,
+            'type_service' => $request->type_service,
             'adresse_service' => $request->adresse_service,
             'mode_paiement' => $request->mode_paiement,
             'statut' => 'demande',
+            'montant' => $montant,
             'description' => $request->description
         ]);
 
@@ -36,11 +43,11 @@ class WebCommandeController extends Controller
         Notification::create([
             'user_id' => Auth::id(),
             'titre' => 'Commande créée',
-            'message' => 'Votre demande de service a été enregistrée avec succès',
+            'message' => 'Votre demande de service a été enregistrée avec succès. Montant: ' . $montant . '€',
             'type' => 'commande'
         ]);
 
-        return redirect('/dashboard')->with('success', 'Commande créée avec succès !');
+        return redirect('/dashboard')->with('success', 'Commande créée avec succès ! Montant: ' . $montant . '€');
     }
 
     // Voir les commandes du client

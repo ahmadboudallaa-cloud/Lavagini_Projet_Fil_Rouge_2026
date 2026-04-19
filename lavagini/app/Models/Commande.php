@@ -13,6 +13,7 @@ class Commande extends Model
         'client_id',
         'zone_id',
         'nombre_vehicules',
+        'type_service',
         'adresse_service',
         'statut',
         'mode_paiement',
