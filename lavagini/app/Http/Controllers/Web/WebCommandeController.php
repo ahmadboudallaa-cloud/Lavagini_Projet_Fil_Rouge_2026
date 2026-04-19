@@ -61,6 +61,19 @@ class WebCommandeController extends Controller
         return view('client.commandes', compact('commandes'));
     }
 
+    // Voir les factures du client
+    public function mesFactures()
+    {
+        $factures = \App\Models\Facture::whereHas('commande', function($query) {
+            $query->where('client_id', Auth::id());
+        })
+        ->with(['commande'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        return view('client.factures', compact('factures'));
+    }
+
     // Voir une commande spécifique
     public function show($id)
     {

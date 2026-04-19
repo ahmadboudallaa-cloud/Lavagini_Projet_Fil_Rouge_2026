@@ -200,10 +200,10 @@
             <h3>📋 Mes commandes</h3>
             <p>Voir l'historique</p>
         </a>
-        <div class="action-card">
-            <h3>💳 Paiements</h3>
-            <p>Gérer les paiements</p>
-        </div>
+        <a href="/client/factures" class="action-card" style="text-decoration: none; color: inherit;">
+            <h3>💳 Factures</h3>
+            <p>Voir mes factures</p>
+        </a>
         <div class="action-card">
             <h3>⭐ Évaluations</h3>
             <p>Noter les laveurs</p>

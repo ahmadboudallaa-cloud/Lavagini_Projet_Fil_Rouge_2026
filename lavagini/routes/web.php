@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/client/commandes', [WebCommandeController::class, 'mesCommandes']);
         Route::get('/client/commandes/{id}', [WebCommandeController::class, 'show']);
         Route::post('/client/evaluations/{commandeId}', [WebCommandeController::class, 'creerEvaluation']);
+        Route::get('/client/factures', [WebCommandeController::class, 'mesFactures']);
     });
     
     // Routes Laveur
