@@ -38,6 +38,10 @@ Route::middleware('auth')->group(function () {
     // Routes pour les notifications
     Route::put('/notifications/{id}/lire', [\App\Http\Controllers\NotificationController::class, 'marquerCommeLue']);
     
+    // Routes pour les factures
+    Route::get('/factures/{id}/telecharger', [\App\Http\Controllers\FactureController::class, 'telecharger']);
+    Route::get('/factures/{id}/afficher', [\App\Http\Controllers\FactureController::class, 'afficher']);
+    
     // Routes Client
     Route::middleware('role:client')->group(function () {
         Route::get('/client/dashboard', [WebDashboardController::class, 'clientDashboard']);
