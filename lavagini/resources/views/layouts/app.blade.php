@@ -211,6 +211,7 @@
                 <li><a href="/register">Inscription</a></li>
             @else
                 <li><a href="/dashboard">Tableau de bord</a></li>
+                <li><a href="/profil">Mon Profil</a></li>
                 <li>
                     <div class="notification-icon" onclick="toggleNotifications()">
                         🔔

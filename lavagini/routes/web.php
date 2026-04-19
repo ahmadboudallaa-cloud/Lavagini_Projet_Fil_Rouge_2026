@@ -42,6 +42,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/factures/{id}/telecharger', [\App\Http\Controllers\FactureController::class, 'telecharger']);
     Route::get('/factures/{id}/afficher', [\App\Http\Controllers\FactureController::class, 'afficher']);
     
+    // Routes pour le profil
+    Route::get('/profil', [\App\Http\Controllers\Web\ProfilController::class, 'show']);
+    Route::put('/profil', [\App\Http\Controllers\Web\ProfilController::class, 'update']);
+    Route::delete('/profil/photo/supprimer', [\App\Http\Controllers\Web\ProfilController::class, 'supprimerPhoto']);
+    
     // Routes Client
     Route::middleware('role:client')->group(function () {
         Route::get('/client/dashboard', [WebDashboardController::class, 'clientDashboard']);
