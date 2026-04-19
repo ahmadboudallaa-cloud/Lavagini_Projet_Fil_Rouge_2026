@@ -82,6 +82,10 @@ class WebMissionController extends Controller
             'type' => 'mission'
         ]);
 
+        // Générer automatiquement la facture si paiement à la fin du service
+        $factureService = new \App\Services\FactureService();
+        $factureService->genererFactureAutomatique($mission->commande_id);
+
         return redirect('/laveur/dashboard')->with('success', 'Mission terminée avec succès !');
     }
 
