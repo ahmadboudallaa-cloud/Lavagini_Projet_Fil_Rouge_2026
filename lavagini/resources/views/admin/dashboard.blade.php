@@ -279,6 +279,11 @@
                                 <button class="btn btn-primary btn-small" onclick="openAssignerModal({{ $commande->id }})">Assigner</button>
                                 @endif
                                 <a href="/admin/commandes/{{ $commande->id }}" class="btn btn-success btn-small">Voir</a>
+                                <form action="/admin/commandes/{{ $commande->id }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('ATTENTION: Cette action est irréversible. Supprimer cette commande ?')">Supprimer</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

@@ -35,6 +35,9 @@ Route::middleware('auth')->group(function () {
         }
     });
     
+    // Routes pour les notifications
+    Route::put('/notifications/{id}/lire', [\App\Http\Controllers\NotificationController::class, 'marquerCommeLue']);
+    
     // Routes Client
     Route::middleware('role:client')->group(function () {
         Route::get('/client/dashboard', [WebDashboardController::class, 'clientDashboard']);
@@ -75,5 +78,6 @@ Route::middleware('auth')->group(function () {
         // Gestion des commandes
         Route::post('/admin/missions/assigner', [WebAdminController::class, 'assignerMission']);
         Route::get('/admin/commandes/{id}', [WebAdminController::class, 'voirCommande']);
+        Route::delete('/admin/commandes/{id}', [WebAdminController::class, 'supprimerCommande']);
     });
 });

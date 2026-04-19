@@ -192,4 +192,16 @@ class WebAdminController extends Controller
 
         return view('admin.commande-detail', compact('commande', 'laveurs'));
     }
+
+    // SUPPRIMER UNE COMMANDE (POUR LES TESTS UNIQUEMENT)
+
+    public function supprimerCommande($id)
+    {
+        $commande = Commande::findOrFail($id);
+        
+        // Supprimer la commande (cascade supprimera mission, paiement, facture, evaluation)
+        $commande->delete();
+
+        return redirect('/admin/dashboard')->with('success', 'Commande supprimée avec succès !');
+    }
 }
