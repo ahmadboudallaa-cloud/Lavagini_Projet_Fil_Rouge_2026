@@ -1,796 +1,486 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Dashboard Admin')
 
 @section('styles')
 <style>
-    .dashboard {
-        padding: 2rem 0;
-    }
-
-    .dashboard-header {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-    }
-
-    .dashboard-header h1 {
-        margin-bottom: 0.5rem;
-    }
-
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-
-    .stat-card h3 {
-        color: #e74c3c;
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-card p {
-        color: #666;
-    }
-
-    .tabs {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #eee;
-    }
-
-    .tab {
-        padding: 1rem 2rem;
-        cursor: pointer;
-        border: none;
-        background: none;
-        font-size: 1rem;
-        color: #666;
-        transition: all 0.3s;
-    }
-
-    .tab.active {
-        color: #e74c3c;
-        border-bottom: 3px solid #e74c3c;
-    }
-
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    .data-table {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    table th {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        text-align: left;
-        font-weight: bold;
-        color: #2c3e50;
-    }
-
-    table td {
-        padding: 1rem;
-        border-bottom: 1px solid #eee;
-    }
-
-    table tr:hover {
-        background-color: #f8f9fa;
-    }
-
-    .badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-    }
-
-    .badge-demande {
-        background-color: #ffeaa7;
-        color: #d63031;
-    }
-
-    .badge-assignee {
-        background-color: #74b9ff;
-        color: #0984e3;
-    }
-
-    .badge-en_cours {
-        background-color: #fdcb6e;
-        color: #e17055;
-    }
-
-    .badge-terminee {
-        background-color: #55efc4;
-        color: #00b894;
-    }
-
-    .badge-payee {
-        background-color: #00b894;
-        color: white;
-    }
-
-    .btn-small {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-    }
-
-    .actions-group {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1000;
-        overflow-y: auto;
-    }
-
-    .modal-content {
-        background: white;
-        max-width: 600px;
-        margin: 3rem auto;
-        padding: 2rem;
-        border-radius: 10px;
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .close {
-        font-size: 2rem;
-        cursor: pointer;
-        color: #999;
-    }
-
-    .close:hover {
-        color: #333;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #555;
-        font-weight: bold;
-    }
-
-    .form-group input,
-    .form-group select {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
-    }
-
-    .btn-full {
-        width: 100%;
-        padding: 1rem;
-        font-size: 1rem;
-    }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto; padding: 2rem 0; }
+    .modal-content { background: #1a1a1a; color: white; max-width: 600px; margin: 0 auto; padding: 2rem; border-radius: 15px; border: 1px solid #333; position: relative; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .close { font-size: 2rem; cursor: pointer; color: #999; }
+    .close:hover { color: #fff; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; color: #ccc; font-weight: bold; }
+    .form-group input, .form-group select { width: 100%; padding: 0.8rem; border: 1px solid #444; background: #333; color: white; border-radius: 8px; }
+    .btn-full { width: 100%; padding: 1rem; background: #00C2FF; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
 </style>
 @endsection
 
 @section('content')
-<div class="container dashboard">
-    <div class="dashboard-header">
-        <h1>Bienvenue, {{ Auth::user()->name }}</h1>
-        <p>Tableau de bord Administrateur</p>
-    </div>
 
-    <div class="stats">
-        <div class="stat-card">
-            <h3>{{ $totalCommandes }}</h3>
-            <p>Commandes totales</p>
-        </div>
-        <div class="stat-card">
-            <h3>{{ $commandesEnAttente }}</h3>
-            <p>En attente</p>
-        </div>
-        <div class="stat-card">
-            <h3>{{ $totalClients }}</h3>
-            <p>Clients</p>
-        </div>
-        <div class="stat-card">
-            <h3>{{ $totalLaveurs }}</h3>
-            <p>Laveurs</p>
-        </div>
-        <div class="stat-card">
-            <h3>{{ $totalZones }}</h3>
-            <p>Zones</p>
-        </div>
-    </div>
+<div id="dashboard-header">
+    <h2 class="text-4xl font-bold mb-10">
+        Bienvenue, <span class="text-cyan-custom font-extrabold">{{ Auth::user()->name }}</span>
+    </h2>
 
-    <div class="tabs">
-        <button class="tab active" onclick="showTab('commandes')" data-tab="commandes">Commandes</button>
-        <button class="tab" onclick="showTab('missions')" data-tab="missions">Missions</button>
-        <button class="tab" onclick="showTab('clients')" data-tab="clients">Clients</button>
-        <button class="tab" onclick="showTab('laveurs')" data-tab="laveurs">Laveurs</button>
-        <button class="tab" onclick="showTab('zones')" data-tab="zones">Zones</button>
-    </div>
-
-    <!-- Tab Commandes -->
-    <div id="commandes" class="tab-content active">
-        <div class="data-table">
-            <h2>Gestion des commandes</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Client</th>
-                        <th>Véhicules</th>
-                        <th>Adresse</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($commandes as $commande)
-                    <tr>
-                        <td>#{{ str_pad($commande->id, 3, '0', STR_PAD_LEFT) }}</td>
-                        <td>{{ $commande->client->name }}</td>
-                        <td>{{ $commande->nombre_vehicules }}</td>
-                        <td>{{ $commande->adresse_service }}</td>
-                        <td><span class="badge badge-{{ $commande->statut }}">{{ ucfirst(str_replace('_', ' ', $commande->statut)) }}</span></td>
-                        <td>
-                            <div class="actions-group">
-                                @if($commande->statut === 'demande')
-                                <button class="btn btn-primary btn-small" onclick="openAssignerModal({{ $commande->id }})">Assigner</button>
-                                @endif
-                                <a href="/admin/commandes/{{ $commande->id }}" class="btn btn-success btn-small">Voir</a>
-                                <form action="/admin/commandes/{{ $commande->id }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('ATTENTION: Cette action est irréversible. Supprimer cette commande ?')">Supprimer</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" style="text-align: center;">Aucune commande</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="grid grid-cols-5 gap-5 mb-10">
+        <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+            <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $totalCommandes ?? 0 }}</span>
+            <span class="text-gray-300 text-sm text-center">Commandes totales</span>
         </div>
-    </div>
-
-    <!-- Tab Missions -->
-    <div id="missions" class="tab-content">
-        <div class="data-table">
-            <h2>Gestion des missions</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Commande</th>
-                        <th>Laveur</th>
-                        <th>Statut</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($missions as $mission)
-                    <tr>
-                        <td>#M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</td>
-                        <td>#{{ str_pad($mission->commande_id, 3, '0', STR_PAD_LEFT) }}</td>
-                        <td>{{ $mission->laveur->name }}</td>
-                        <td><span class="badge badge-{{ $mission->statut }}">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span></td>
-                        <td>{{ $mission->created_at->format('d/m/Y') }}</td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" style="text-align: center;">Aucune mission</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center border-2 border-cyan-custom">
+            <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $commandesEnAttente ?? 0 }}</span>
+            <span class="text-gray-300 text-sm text-center">En attente</span>
         </div>
-    </div>
-
-    <!-- Tab Clients -->
-    <div id="clients" class="tab-content">
-        <div class="data-table">
-            <h2>Gestion des clients</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Type</th>
-                        <th>Téléphone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($clients as $client)
-                    <tr>
-                        <td>{{ $client->id }}</td>
-                        <td>{{ $client->name }}</td>
-                        <td>{{ $client->email }}</td>
-                        <td>{{ ucfirst($client->type_client ?? 'N/A') }}</td>
-                        <td>{{ $client->telephone ?? 'N/A' }}</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small" onclick="openModifierClientModal({{ $client->id }}, '{{ $client->name }}', '{{ $client->email }}', '{{ $client->telephone }}', '{{ $client->adresse }}', '{{ $client->type_client }}')">Modifier</button>
-                                <form action="/admin/clients/{{ $client->id }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" style="text-align: center;">Aucun client</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+            <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $totalClients ?? 0 }}</span>
+            <span class="text-gray-300 text-sm text-center">Clients</span>
         </div>
-    </div>
-
-    <!-- Tab Laveurs -->
-    <div id="laveurs" class="tab-content">
-        <div class="data-table">
-            <h2>Gestion des laveurs</h2>
-            <button class="btn btn-success" style="margin-bottom: 1rem;" onclick="openLaveurModal()">Ajouter un laveur</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($laveurs as $laveur)
-                    <tr>
-                        <td>{{ $laveur->id }}</td>
-                        <td>{{ $laveur->name }}</td>
-                        <td>{{ $laveur->email }}</td>
-                        <td>{{ $laveur->telephone ?? 'N/A' }}</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small" onclick="openModifierLaveurModal({{ $laveur->id }}, '{{ $laveur->name }}', '{{ $laveur->email }}', '{{ $laveur->telephone }}', '{{ $laveur->adresse }}')">Modifier</button>
-                                <form action="/admin/laveurs/{{ $laveur->id }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" style="text-align: center;">Aucun laveur</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+            <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $totalLaveurs ?? 0 }}</span>
+            <span class="text-gray-300 text-sm text-center">Laveurs</span>
         </div>
-    </div>
-
-    <!-- Tab Zones -->
-    <div id="zones" class="tab-content">
-        <div class="data-table">
-            <h2>Gestion des zones géographiques</h2>
-            <button class="btn btn-success" style="margin-bottom: 1rem;" onclick="openZoneModal()">Ajouter une zone</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Ville</th>
-                        <th>Code Postal</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($zones as $zone)
-                    <tr>
-                        <td>{{ $zone->id }}</td>
-                        <td>{{ $zone->nom }}</td>
-                        <td>{{ $zone->ville }}</td>
-                        <td>{{ $zone->code_postal }}</td>
-                        <td>
-                            <div class="actions-group">
-                                <button class="btn btn-primary btn-small" onclick="openModifierZoneModal({{ $zone->id }}, '{{ $zone->nom }}', '{{ $zone->ville }}', '{{ $zone->code_postal }}')">Modifier</button>
-                                <form action="/admin/zones/{{ $zone->id }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" style="text-align: center;">Aucune zone</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+            <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $totalZones ?? 0 }}</span>
+            <span class="text-gray-300 text-sm text-center">Zones</span>
         </div>
     </div>
 </div>
 
-<!-- Modal Ajouter Laveur -->
+<div id="commandes" class="tab-content active">
+    <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+        <h3 class="text-cyan-custom text-xl font-bold mb-8">Gestion des commandes</h3>
+        
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-white text-lg">
+                    <th class="pb-4 font-semibold">ID</th>
+                    <th class="pb-4 font-semibold">Client</th>
+                    <th class="pb-4 font-semibold">Véhicules</th>
+                    <th class="pb-4 font-semibold">Adresse</th>
+                    <th class="pb-4 font-semibold text-center">Statut</th>
+                    <th class="pb-4 font-semibold text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-200">
+                @forelse($commandes as $commande)
+                <tr class="hover:bg-dark-hover transition duration-150">
+                    <td class="py-4">{{ str_pad($commande->id, 2, '0', STR_PAD_LEFT) }}</td>
+                    <td class="py-4">{{ $commande->client->name }}</td>
+                    <td class="py-4">{{ $commande->nombre_vehicules }}</td>
+                    <td class="py-4 max-w-[200px] truncate text-gray-400">{{ $commande->adresse_service }}</td>
+                    <td class="py-4 text-center">
+                        @if($commande->statut === 'payee' || $commande->statut === 'payée')
+                            <span class="bg-cyan-custom text-black px-4 py-1.5 rounded-full text-sm font-bold">Payée</span>
+                        @elseif($commande->statut === 'demande')
+                            <span class="bg-yellow-500 text-black px-4 py-1.5 rounded-full text-sm font-bold">Demande</span>
+                        @else
+                            <span class="bg-gray-500 text-white px-4 py-1.5 rounded-full text-sm font-bold">{{ ucfirst($commande->statut) }}</span>
+                        @endif
+                    </td>
+                    <td class="py-4 flex justify-center space-x-2 items-center">
+                        @if($commande->statut === 'demande')
+                            <button onclick="openAssignerModal({{ $commande->id }})" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700">Assigner</button>
+                        @endif
+                        <a href="/admin/commandes/{{ $commande->id }}" class="bg-white text-black px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-200">Voir</a>
+                        <form action="/admin/commandes/{{ $commande->id }}" method="POST" class="inline m-0">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-red-700" onclick="return confirm('Supprimer cette commande ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="6" class="text-center py-6 text-gray-500">Aucune commande</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="missions" class="tab-content">
+    <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+        <h3 class="text-cyan-custom text-xl font-bold mb-8">Gestion des missions</h3>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-white text-lg border-b border-gray-700">
+                    <th class="pb-4 font-semibold">ID</th>
+                    <th class="pb-4 font-semibold">Commande</th>
+                    <th class="pb-4 font-semibold">Laveur</th>
+                    <th class="pb-4 font-semibold">Statut</th>
+                    <th class="pb-4 font-semibold">Date</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-200">
+                @forelse($missions ?? [] as $mission)
+                <tr class="hover:bg-dark-hover">
+                    <td class="py-4">#M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</td>
+                    <td class="py-4">#{{ str_pad($mission->commande_id, 3, '0', STR_PAD_LEFT) }}</td>
+                    <td class="py-4">{{ $mission->laveur->name }}</td>
+                    <td class="py-4"><span class="bg-cyan-custom text-black px-3 py-1 rounded-full text-xs font-bold">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span></td>
+                    <td class="py-4">{{ $mission->created_at->format('d/m/Y') }}</td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="text-center py-6 text-gray-500">Aucune mission</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="clients" class="tab-content">
+    <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-cyan-custom text-xl font-bold">Gestion des clients</h3>
+            <button onclick="openClientModal()" class="bg-cyan-custom text-black px-6 py-2 rounded-full font-bold hover:bg-cyan-400">+ Ajouter</button>
+        </div>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-white text-lg border-b border-gray-700">
+                    <th class="pb-4 font-semibold">Nom</th>
+                    <th class="pb-4 font-semibold">Email</th>
+                    <th class="pb-4 font-semibold">Téléphone</th>
+                    <th class="pb-4 font-semibold text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-200">
+                @forelse($clients ?? [] as $client)
+                <tr class="hover:bg-dark-hover">
+                    <td class="py-4">{{ $client->name }}</td>
+                    <td class="py-4">{{ $client->email }}</td>
+                    <td class="py-4">{{ $client->telephone ?? 'N/A' }}</td>
+                    <td class="py-4 flex justify-center space-x-2">
+                        <button onclick="openModifierClientModal({{ $client->id }}, '{{ $client->name }}', '{{ $client->email }}', '{{ $client->telephone }}')" class="bg-white text-black px-4 py-1 rounded-full text-sm font-medium">Modifier</button>
+                        <form action="/admin/clients/{{ $client->id }}" method="POST" class="inline m-0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded-full text-sm" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-center py-6 text-gray-500">Aucun client</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="laveurs" class="tab-content">
+    <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-cyan-custom text-xl font-bold">Gestion des laveurs</h3>
+            <button onclick="openLaveurModal()" class="bg-cyan-custom text-black px-6 py-2 rounded-full font-bold hover:bg-cyan-400">+ Ajouter</button>
+        </div>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-white text-lg border-b border-gray-700">
+                    <th class="pb-4 font-semibold">Nom</th>
+                    <th class="pb-4 font-semibold">Email</th>
+                    <th class="pb-4 font-semibold">Téléphone</th>
+                    <th class="pb-4 font-semibold text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-200">
+                @forelse($laveurs ?? [] as $laveur)
+                <tr class="hover:bg-dark-hover">
+                    <td class="py-4">{{ $laveur->name }}</td>
+                    <td class="py-4">{{ $laveur->email }}</td>
+                    <td class="py-4">{{ $laveur->telephone ?? 'N/A' }}</td>
+                    <td class="py-4 flex justify-center space-x-2">
+                        <button onclick="openModifierLaveurModal({{ $laveur->id }}, '{{ $laveur->name }}', '{{ $laveur->email }}')" class="bg-white text-black px-4 py-1 rounded-full text-sm">Modifier</button>
+                        <form action="/admin/laveurs/{{ $laveur->id }}" method="POST" class="inline m-0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded-full text-sm" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-center py-6 text-gray-500">Aucun laveur</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="zones" class="tab-content">
+    <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-cyan-custom text-xl font-bold">Gestion des zones</h3>
+            <button onclick="openZoneModal()" class="bg-cyan-custom text-black px-6 py-2 rounded-full font-bold hover:bg-cyan-400">+ Ajouter</button>
+        </div>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-white text-lg border-b border-gray-700">
+                    <th class="pb-4 font-semibold">Nom</th>
+                    <th class="pb-4 font-semibold">Ville</th>
+                    <th class="pb-4 font-semibold">Code Postal</th>
+                    <th class="pb-4 font-semibold text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-200">
+                @forelse($zones ?? [] as $zone)
+                <tr class="hover:bg-dark-hover">
+                    <td class="py-4">{{ $zone->nom }}</td>
+                    <td class="py-4">{{ $zone->ville }}</td>
+                    <td class="py-4">{{ $zone->code_postal }}</td>
+                    <td class="py-4 flex justify-center space-x-2">
+                        <button onclick="openModifierZoneModal({{ $zone->id }}, '{{ $zone->nom }}', '{{ $zone->ville }}', '{{ $zone->code_postal }}')" class="bg-white text-black px-4 py-1 rounded-full text-sm">Modifier</button>
+                        <form action="/admin/zones/{{ $zone->id }}" method="POST" class="inline m-0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded-full text-sm" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-center py-6 text-gray-500">Aucune zone</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="parametres" class="tab-content">
+    <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+        <h3 class="text-cyan-custom text-xl font-bold mb-8">Paramètres du compte</h3>
+        
+        <form action="/admin/profil/update" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @method('PUT')
+            
+            <div class="flex items-center space-x-6 mb-8">
+                <div class="w-24 h-24 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
+                    @if(auth()->user()->photo_profile)
+                        <img src="{{ asset('uploads/profiles/' . auth()->user()->photo_profile) }}" class="w-full h-full object-cover" id="profilePreview">
+                    @else
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    @endif
+                </div>
+                <div>
+                    <label class="bg-cyan-custom text-black px-6 py-2 rounded-full font-bold cursor-pointer hover:bg-cyan-400">
+                        Changer la photo
+                        <input type="file" name="photo_profile" accept="image/*" class="hidden" onchange="previewImage(event)">
+                    </label>
+                    <p class="text-gray-400 text-sm mt-2">JPG, PNG ou GIF (Max. 2MB)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-2">Nom complet</label>
+                    <input type="text" name="name" value="{{ auth()->user()->name }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-2">Email</label>
+                    <input type="email" name="email" value="{{ auth()->user()->email }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-2">Téléphone</label>
+                    <input type="text" name="telephone" value="{{ auth()->user()->telephone }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-2">Adresse</label>
+                    <input type="text" name="adresse" value="{{ auth()->user()->adresse }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none">
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-6 mt-6">
+                <h4 class="text-white font-bold mb-4">Changer le mot de passe</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Nouveau mot de passe</label>
+                        <input type="password" name="password" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" placeholder="Laisser vide pour ne pas changer">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Confirmer le mot de passe</label>
+                        <input type="password" name="password_confirmation" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" placeholder="Confirmer le nouveau mot de passe">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-4">
+                <button type="button" onclick="showTab('commandes', document.querySelector('.menu-item'))" class="px-6 py-3 bg-gray-600 text-white rounded-full font-bold hover:bg-gray-700">Annuler</button>
+                <button type="submit" class="px-6 py-3 bg-cyan-custom text-black rounded-full font-bold hover:bg-cyan-400">Enregistrer les modifications</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="laveurModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Ajouter un laveur</h2>
+            <h2 class="text-cyan-custom font-bold text-xl">Ajouter un laveur</h2>
             <span class="close" onclick="closeLaveurModal()">&times;</span>
         </div>
-        
         <form action="/admin/laveurs" method="POST">
             @csrf
-            
-            <div class="form-group">
-                <label for="name">Nom complet</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <div class="form-group">
-                <label for="telephone">Téléphone</label>
-                <input type="tel" id="telephone" name="telephone">
-            </div>
-
-            <div class="form-group">
-                <label for="adresse">Adresse</label>
-                <input type="text" id="adresse" name="adresse">
-            </div>
-
-            <button type="submit" class="btn btn-success btn-full">Créer le laveur</button>
+            <div class="form-group"><label>Nom complet</label><input type="text" name="name" required></div>
+            <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+            <div class="form-group"><label>Mot de passe</label><input type="password" name="password" required></div>
+            <button type="submit" class="btn-full">Créer le laveur</button>
         </form>
     </div>
 </div>
 
-<!-- Modal Ajouter Zone -->
+<div id="clientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-cyan-custom font-bold text-xl">Ajouter un client</h2>
+            <span class="close" onclick="closeClientModal()">&times;</span>
+        </div>
+        <form action="/admin/clients" method="POST">
+            @csrf
+            <div class="form-group"><label>Nom complet</label><input type="text" name="name" required></div>
+            <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+            <div class="form-group"><label>Téléphone</label><input type="text" name="telephone"></div>
+            <div class="form-group"><label>Mot de passe</label><input type="password" name="password" required></div>
+            <button type="submit" class="btn-full">Créer le client</button>
+        </form>
+    </div>
+</div>
+
 <div id="zoneModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Ajouter une zone</h2>
+            <h2 class="text-cyan-custom font-bold text-xl">Ajouter une zone</h2>
             <span class="close" onclick="closeZoneModal()">&times;</span>
         </div>
-        
         <form action="/admin/zones" method="POST">
             @csrf
-            
-            <div class="form-group">
-                <label for="nom">Nom de la zone</label>
-                <input type="text" id="nom" name="nom" required>
-            </div>
-
-            <div class="form-group">
-                <label for="ville">Ville</label>
-                <input type="text" id="ville" name="ville" required>
-            </div>
-
-            <div class="form-group">
-                <label for="code_postal">Code postal</label>
-                <input type="text" id="code_postal" name="code_postal" required>
-            </div>
-
-            <button type="submit" class="btn btn-success btn-full">Créer la zone</button>
+            <div class="form-group"><label>Nom de la zone</label><input type="text" name="nom" required></div>
+            <div class="form-group"><label>Ville</label><input type="text" name="ville" required></div>
+            <div class="form-group"><label>Code postal</label><input type="text" name="code_postal" required></div>
+            <button type="submit" class="btn-full">Créer la zone</button>
         </form>
     </div>
 </div>
 
-<!-- Modal Assigner Mission -->
-<div id="assignerModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Assigner un laveur</h2>
-            <span class="close" onclick="closeAssignerModal()">&times;</span>
-        </div>
-        
-        <form action="/admin/missions/assigner" method="POST">
-            @csrf
-            
-            <input type="hidden" id="commande_id" name="commande_id">
-
-            <div class="form-group">
-                <label for="laveur_id">Sélectionner un laveur</label>
-                <select id="laveur_id" name="laveur_id" required>
-                    <option value="">Choisir un laveur</option>
-                    @foreach($laveurs as $laveur)
-                    <option value="{{ $laveur->id }}">{{ $laveur->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Assigner la mission</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Modifier Client -->
-<div id="modifierClientModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Modifier un client</h2>
-            <span class="close" onclick="closeModifierClientModal()">&times;</span>
-        </div>
-        
-        <form id="formModifierClient" method="POST">
-            @csrf
-            
-            <div class="form-group">
-                <label for="client_name">Nom complet</label>
-                <input type="text" id="client_name" name="name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="client_email">Email</label>
-                <input type="email" id="client_email" name="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="client_telephone">Téléphone</label>
-                <input type="tel" id="client_telephone" name="telephone">
-            </div>
-
-            <div class="form-group">
-                <label for="client_adresse">Adresse</label>
-                <input type="text" id="client_adresse" name="adresse">
-            </div>
-
-            <div class="form-group">
-                <label for="client_type">Type de client</label>
-                <select id="client_type" name="type_client">
-                    <option value="particulier">Particulier</option>
-                    <option value="agence">Agence</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Modifier le client</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Modifier Laveur -->
-<div id="modifierLaveurModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Modifier un laveur</h2>
-            <span class="close" onclick="closeModifierLaveurModal()">&times;</span>
-        </div>
-        
-        <form id="formModifierLaveur" method="POST">
-            @csrf
-            
-            <div class="form-group">
-                <label for="laveur_name">Nom complet</label>
-                <input type="text" id="laveur_name" name="name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="laveur_email">Email</label>
-                <input type="email" id="laveur_email" name="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="laveur_password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
-                <input type="password" id="laveur_password" name="password">
-            </div>
-
-            <div class="form-group">
-                <label for="laveur_telephone">Téléphone</label>
-                <input type="tel" id="laveur_telephone" name="telephone">
-            </div>
-
-            <div class="form-group">
-                <label for="laveur_adresse">Adresse</label>
-                <input type="text" id="laveur_adresse" name="adresse">
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Modifier le laveur</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Modifier Zone -->
 <div id="modifierZoneModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Modifier une zone</h2>
+            <h2 class="text-cyan-custom font-bold text-xl">Modifier la zone</h2>
             <span class="close" onclick="closeModifierZoneModal()">&times;</span>
         </div>
-        
-        <form id="formModifierZone" method="POST">
-            @csrf
-            
-            <div class="form-group">
-                <label for="zone_nom">Nom de la zone</label>
-                <input type="text" id="zone_nom" name="nom" required>
-            </div>
-
-            <div class="form-group">
-                <label for="zone_ville">Ville</label>
-                <input type="text" id="zone_ville" name="ville" required>
-            </div>
-
-            <div class="form-group">
-                <label for="zone_code_postal">Code postal</label>
-                <input type="text" id="zone_code_postal" name="code_postal" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Modifier la zone</button>
+        <form id="modifierZoneForm" method="POST">
+            @csrf @method('PUT')
+            <div class="form-group"><label>Nom de la zone</label><input type="text" name="nom" id="zone_nom" required></div>
+            <div class="form-group"><label>Ville</label><input type="text" name="ville" id="zone_ville" required></div>
+            <div class="form-group"><label>Code postal</label><input type="text" name="code_postal" id="zone_code_postal" required></div>
+            <button type="submit" class="btn-full">Modifier la zone</button>
         </form>
     </div>
 </div>
+
+<div id="modifierClientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-cyan-custom font-bold text-xl">Modifier le client</h2>
+            <span class="close" onclick="closeModifierClientModal()">&times;</span>
+        </div>
+        <form id="modifierClientForm" method="POST">
+            @csrf @method('PUT')
+            <div class="form-group"><label>Nom complet</label><input type="text" name="name" id="client_name" required></div>
+            <div class="form-group"><label>Email</label><input type="email" name="email" id="client_email" required></div>
+            <div class="form-group"><label>Téléphone</label><input type="text" name="telephone" id="client_telephone"></div>
+            <button type="submit" class="btn-full">Modifier le client</button>
+        </form>
+    </div>
+</div>
+
+<div id="modifierLaveurModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-cyan-custom font-bold text-xl">Modifier le laveur</h2>
+            <span class="close" onclick="closeModifierLaveurModal()">&times;</span>
+        </div>
+        <form id="modifierLaveurForm" method="POST">
+            @csrf @method('PUT')
+            <div class="form-group"><label>Nom complet</label><input type="text" name="name" id="laveur_name" required></div>
+            <div class="form-group"><label>Email</label><input type="email" name="email" id="laveur_email" required></div>
+            <button type="submit" class="btn-full">Modifier le laveur</button>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
-    // Sauvegarder l'onglet actif dans localStorage
-    function showTab(tabName) {
-        const contents = document.querySelectorAll('.tab-content');
-        contents.forEach(content => content.classList.remove('active'));
-
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => tab.classList.remove('active'));
-
-        document.getElementById(tabName).classList.add('active');
-        event.target.classList.add('active');
-        
-        // Sauvegarder l'onglet actif
-        localStorage.setItem('activeTab', tabName);
-    }
-
-    // Restaurer l'onglet actif au chargement de la page
-    window.addEventListener('DOMContentLoaded', function() {
-        const activeTab = localStorage.getItem('activeTab');
-        if (activeTab) {
-            // Cacher tous les contenus
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-
-            // Désactiver tous les tabs
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            // Activer l'onglet sauvegardé
-            const tabContent = document.getElementById(activeTab);
-            if (tabContent) {
-                tabContent.classList.add('active');
-            }
-            
-            // Activer le bouton correspondant
-            const tabButtons = document.querySelectorAll('.tab');
-            tabButtons.forEach(button => {
-                if (button.getAttribute('data-tab') === activeTab) {
-                    button.classList.add('active');
-                }
-            });
-        }
-    });
-
-    function openLaveurModal() {
-        document.getElementById('laveurModal').style.display = 'block';
-    }
-
-    function closeLaveurModal() {
-        document.getElementById('laveurModal').style.display = 'none';
-    }
-
-    function openZoneModal() {
-        document.getElementById('zoneModal').style.display = 'block';
-    }
-
-    function closeZoneModal() {
-        document.getElementById('zoneModal').style.display = 'none';
-    }
-
-    function openAssignerModal(commandeId) {
-        document.getElementById('commande_id').value = commandeId;
-        document.getElementById('assignerModal').style.display = 'block';
-    }
-
-    function closeAssignerModal() {
-        document.getElementById('assignerModal').style.display = 'none';
-    }
-
-    // Fonctions pour modifier un client
-    function openModifierClientModal(id, name, email, telephone, adresse, type_client) {
-        document.getElementById('formModifierClient').action = '/admin/clients/' + id;
-        document.getElementById('client_name').value = name;
-        document.getElementById('client_email').value = email;
-        document.getElementById('client_telephone').value = telephone || '';
-        document.getElementById('client_adresse').value = adresse || '';
-        document.getElementById('client_type').value = type_client || 'particulier';
-        document.getElementById('modifierClientModal').style.display = 'block';
-    }
-
-    function closeModifierClientModal() {
-        document.getElementById('modifierClientModal').style.display = 'none';
-    }
-
-    // Fonctions pour modifier un laveur
-    function openModifierLaveurModal(id, name, email, telephone, adresse) {
-        document.getElementById('formModifierLaveur').action = '/admin/laveurs/' + id;
-        document.getElementById('laveur_name').value = name;
-        document.getElementById('laveur_email').value = email;
-        document.getElementById('laveur_telephone').value = telephone || '';
-        document.getElementById('laveur_adresse').value = adresse || '';
-        document.getElementById('laveur_password').value = '';
-        document.getElementById('modifierLaveurModal').style.display = 'block';
-    }
-
-    function closeModifierLaveurModal() {
-        document.getElementById('modifierLaveurModal').style.display = 'none';
-    }
-
-    // Fonctions pour modifier une zone
+    function openLaveurModal() { document.getElementById('laveurModal').style.display = 'block'; }
+    function closeLaveurModal() { document.getElementById('laveurModal').style.display = 'none'; }
+    function openZoneModal() { document.getElementById('zoneModal').style.display = 'block'; }
+    function closeZoneModal() { document.getElementById('zoneModal').style.display = 'none'; }
+    function openClientModal() { document.getElementById('clientModal').style.display = 'block'; }
+    function closeClientModal() { document.getElementById('clientModal').style.display = 'none'; }
+    
     function openModifierZoneModal(id, nom, ville, code_postal) {
-        document.getElementById('formModifierZone').action = '/admin/zones/' + id;
         document.getElementById('zone_nom').value = nom;
         document.getElementById('zone_ville').value = ville;
         document.getElementById('zone_code_postal').value = code_postal;
+        document.getElementById('modifierZoneForm').action = '/admin/zones/' + id;
         document.getElementById('modifierZoneModal').style.display = 'block';
     }
-
-    function closeModifierZoneModal() {
-        document.getElementById('modifierZoneModal').style.display = 'none';
+    function closeModifierZoneModal() { document.getElementById('modifierZoneModal').style.display = 'none'; }
+    
+    function openModifierClientModal(id, name, email, telephone) {
+        document.getElementById('client_name').value = name;
+        document.getElementById('client_email').value = email;
+        document.getElementById('client_telephone').value = telephone || '';
+        document.getElementById('modifierClientForm').action = '/admin/clients/' + id;
+        document.getElementById('modifierClientModal').style.display = 'block';
     }
-
+    function closeModifierClientModal() { document.getElementById('modifierClientModal').style.display = 'none'; }
+    
+    function openModifierLaveurModal(id, name, email) {
+        document.getElementById('laveur_name').value = name;
+        document.getElementById('laveur_email').value = email;
+        document.getElementById('modifierLaveurForm').action = '/admin/laveurs/' + id;
+        document.getElementById('modifierLaveurModal').style.display = 'block';
+    }
+    function closeModifierLaveurModal() { document.getElementById('modifierLaveurModal').style.display = 'none'; }
+    
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('profilePreview');
+                if (preview) {
+                    preview.src = e.target.result;
+                } else {
+                    const parent = event.target.closest('.flex').querySelector('.w-24');
+                    parent.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover" id="profilePreview">';
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // Fonction pour gérer l'affichage du header selon l'onglet
+    function toggleDashboardHeader(tabName) {
+        const header = document.getElementById('dashboard-header');
+        if (tabName === 'parametres') {
+            header.style.display = 'none';
+        } else {
+            header.style.display = 'block';
+        }
+    }
+    
+    // Modifier la fonction showTab existante dans admin.blade.php
+    const originalShowTab = window.showTab;
+    window.showTab = function(tabName, element) {
+        toggleDashboardHeader(tabName);
+        if (originalShowTab) originalShowTab(tabName, element);
+    };
+    
+    // Au chargement de la page
+    window.addEventListener('DOMContentLoaded', () => {
+        const activeTab = localStorage.getItem('activeTab') || 'commandes';
+        toggleDashboardHeader(activeTab);
+    });
+    
     window.onclick = function(event) {
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
