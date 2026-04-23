@@ -1,210 +1,96 @@
-@extends('layouts.app')
+@extends(auth()->user()->role === 'client' ? 'layouts.client' : (auth()->user()->role === 'laveur' ? 'layouts.laveur' : 'layouts.admin'))
 
 @section('title', 'Mon Profil')
-
-@section('styles')
-<style>
-    .profil-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-    }
-
-    .profil-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .photo-section {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .photo-profile {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 5px solid white;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        margin-bottom: 1rem;
-    }
-
-    .photo-placeholder {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        background: #ddd;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: #999;
-        margin: 0 auto 1rem;
-        border: 5px solid white;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .profil-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-bottom: 2rem;
-    }
-
-    .profil-card h3 {
-        color: #2c3e50;
-        margin-bottom: 1.5rem;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 0.5rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #555;
-        font-weight: bold;
-    }
-
-    .form-group input,
-    .form-group select {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-        outline: none;
-        border-color: #3498db;
-    }
-
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-
-    .badge-role {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: bold;
-        margin-top: 0.5rem;
-    }
-
-    .badge-client {
-        background-color: #3498db;
-        color: white;
-    }
-
-    .badge-laveur {
-        background-color: #27ae60;
-        color: white;
-    }
-
-    .badge-admin {
-        background-color: #e74c3c;
-        color: white;
-    }
-</style>
-@endsection
+@section('page-title', 'Mon Profil')
 
 @section('content')
-<div class="profil-container">
-    <div class="profil-header">
-        <h1>Mon Profil</h1>
-        <span class="badge-role badge-{{ $user->role }}">{{ ucfirst($user->role) }}</span>
-    </div>
 
-    <div class="profil-card">
-        <h3>Photo de profil</h3>
-        <div class="photo-section">
-            @if($user->photo_profile)
-                <img src="{{ asset('storage/' . $user->photo_profile) }}" alt="Photo de profil" class="photo-profile">
-            @else
-                <div class="photo-placeholder">👤</div>
-            @endif
-            
-            <form action="/profil/photo/supprimer" method="POST" style="display: inline;">
-                @csrf
-                @method('DELETE')
-                @if($user->photo_profile)
-                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Supprimer la photo ?')">Supprimer la photo</button>
-                @endif
-            </form>
-        </div>
-    </div>
-
-    <div class="profil-card">
-        <h3>Informations personnelles</h3>
+<div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+    <h3 class="text-cyan-custom text-xl font-bold mb-8">Mon Profil</h3>
+    
+    <form action="/profil" method="POST" enctype="multipart/form-data" class="space-y-6">
+        @csrf
+        @method('PUT')
         
-        <form action="/profil" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            
-            <div class="form-group">
-                <label for="name">Nom complet *</label>
-                <input type="text" id="name" name="name" value="{{ $user->name }}" required>
+        <div class="flex items-center space-x-6 mb-8">
+            <div class="w-24 h-24 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
+                @if($user->photo_profile)
+                    <img src="{{ asset('uploads/profiles/' . $user->photo_profile) }}" class="w-full h-full object-cover" id="profilePreview">
+                @else
+                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                @endif
             </div>
+            <div>
+                <label class="bg-cyan-custom text-black px-6 py-2 rounded-full font-bold cursor-pointer hover:bg-cyan-400">
+                    Changer la photo
+                    <input type="file" name="photo_profile" accept="image/*" class="hidden" onchange="previewImage(event)">
+                </label>
+                <p class="text-gray-400 text-sm mt-2">JPG, PNG ou GIF (Max. 2MB)</p>
+            </div>
+        </div>
 
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" value="{{ $user->email }}" required>
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <label class="block text-gray-300 font-semibold mb-2">Nom complet</label>
+                <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" required>
             </div>
+            <div>
+                <label class="block text-gray-300 font-semibold mb-2">Email</label>
+                <input type="email" name="email" value="{{ old('email', $user->email) }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" required>
+            </div>
+        </div>
 
-            <div class="form-group">
-                <label for="telephone">Téléphone</label>
-                <input type="tel" id="telephone" name="telephone" value="{{ $user->telephone }}">
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <label class="block text-gray-300 font-semibold mb-2">Téléphone</label>
+                <input type="text" name="telephone" value="{{ old('telephone', $user->telephone) }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none">
             </div>
+            <div>
+                <label class="block text-gray-300 font-semibold mb-2">Adresse</label>
+                <input type="text" name="adresse" value="{{ old('adresse', $user->adresse) }}" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none">
+            </div>
+        </div>
 
-            <div class="form-group">
-                <label for="adresse">Adresse</label>
-                <input type="text" id="adresse" name="adresse" value="{{ $user->adresse }}">
+        <div class="border-t border-gray-700 pt-6 mt-6">
+            <h4 class="text-white font-bold mb-4">Changer le mot de passe</h4>
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-2">Nouveau mot de passe</label>
+                    <input type="password" name="password" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" placeholder="Laisser vide pour ne pas changer">
+                </div>
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-2">Confirmer le mot de passe</label>
+                    <input type="password" name="password_confirmation" class="w-full px-4 py-3 bg-dark-hover border border-gray-600 rounded-xl text-white focus:border-cyan-custom focus:outline-none" placeholder="Confirmer le nouveau mot de passe">
+                </div>
             </div>
+        </div>
 
-            @if($user->role === 'client')
-            <div class="form-group">
-                <label for="type_client">Type de client</label>
-                <select id="type_client" name="type_client">
-                    <option value="particulier" {{ $user->type_client === 'particulier' ? 'selected' : '' }}>Particulier</option>
-                    <option value="agence" {{ $user->type_client === 'agence' ? 'selected' : '' }}>Agence</option>
-                </select>
-            </div>
-            @endif
-
-            <div class="form-group">
-                <label for="photo_profile">Changer la photo de profil</label>
-                <input type="file" id="photo_profile" name="photo_profile" accept="image/*">
-                <small style="color: #999;">Format accepté : JPG, PNG, GIF (max 2MB)</small>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
-                <input type="password" id="password" name="password">
-            </div>
-
-            <div class="form-group">
-                <label for="password_confirmation">Confirmer le mot de passe</label>
-                <input type="password" id="password_confirmation" name="password_confirmation">
-            </div>
-
-            <div class="btn-group">
-                <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
-                <a href="/dashboard" class="btn btn-primary">Retour au dashboard</a>
-            </div>
-        </form>
-    </div>
+        <div class="flex justify-end space-x-4 pt-4">
+            <a href="{{ auth()->user()->role === 'client' ? '/client/dashboard' : (auth()->user()->role === 'laveur' ? '/laveur/dashboard' : '/admin/dashboard') }}" class="px-6 py-3 bg-gray-600 text-white rounded-full font-bold hover:bg-gray-700">Annuler</a>
+            <button type="submit" class="px-6 py-3 bg-cyan-custom text-black rounded-full font-bold hover:bg-cyan-400">Enregistrer les modifications</button>
+        </div>
+    </form>
 </div>
+
+@endsection
+
+@section('scripts')
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('profilePreview');
+                if (preview) {
+                    preview.src = e.target.result;
+                } else {
+                    const parent = event.target.closest('.flex').querySelector('.w-24');
+                    parent.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover" id="profilePreview">';
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 @endsection
