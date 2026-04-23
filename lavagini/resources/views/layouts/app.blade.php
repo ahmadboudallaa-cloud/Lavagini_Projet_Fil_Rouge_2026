@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') - LAVAGINI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,40 +14,123 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             line-height: 1.6;
             color: #333;
         }
 
+        /* Navbar Sticky */
         .navbar {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            transition: background 0.3s ease;
+            padding: 1.2rem 5%;
         }
 
-        .navbar .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3498db;
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+            filter: brightness(0) saturate(100%) invert(58%) sepia(94%) saturate(2844%) hue-rotate(169deg) brightness(103%) contrast(101%);
+        }
+
+        .logo-text {
+            color: #00BFFF;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            font-weight: 400;
+            font-size: 1rem;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: #00BFFF;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
+        }
+
+        .btn-login {
+            background: #00BFFF;
+            color: #fff;
+        }
+
+        .btn-signup {
+            background: #3333FF;
+            color: #fff;
+        }
+
+        main {
+            padding-top: {{ request()->is('login') || request()->is('register') ? '0' : '100px' }};
         }
 
         .navbar ul {
             list-style: none;
             display: flex;
             gap: 2rem;
+            align-items: center;
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
+        .navbar ul a {
+            color: #fff;
+            font-weight: 400;
+            font-size: 1rem;
             transition: color 0.3s;
+            text-decoration: none;
         }
 
-        .navbar a:hover {
-            color: #3498db;
+        .navbar ul a:hover {
+            color: #00BFFF;
         }
 
         .notification-icon {
@@ -202,35 +286,47 @@
     @yield('styles')
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">LAVAGINI</div>
-        <ul>
+    <nav class="navbar" id="navbar" style="{{ request()->is('login') || request()->is('register') ? 'display: none;' : '' }}">
+        <div class="navbar-content">
+            <a href="/" class="logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="LAVAGINI">
+                <span class="logo-text">LAVAGINI</span>
+            </a>
             @guest
-                <li><a href="/">Accueil</a></li>
-                <li><a href="/login">Connexion</a></li>
-                <li><a href="/register">Inscription</a></li>
+                <div class="nav-links">
+                    <a href="/#accueil">Accueil</a>
+                    <a href="/#services">Services</a>
+                    <a href="/#tarifs">Tarifs</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+                <div class="nav-buttons">
+                    <a href="/login" class="btn btn-login">Connexion</a>
+                    <a href="/register" class="btn btn-signup">S'inscrire</a>
+                </div>
             @else
-                <li><a href="/dashboard">Tableau de bord</a></li>
-                <li><a href="/profil">Mon Profil</a></li>
-                <li>
-                    <div class="notification-icon" onclick="toggleNotifications()">
-                        🔔
-                        @php
-                            $notificationsNonLues = auth()->user()->notifications()->where('lu', false)->count();
-                        @endphp
-                        @if($notificationsNonLues > 0)
-                        <span class="notification-badge">{{ $notificationsNonLues }}</span>
-                        @endif
-                    </div>
-                </li>
-                <li>
-                    <form action="/logout" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" style="background: none; border: none; color: white; cursor: pointer; font-size: 1rem;">Déconnexion</button>
-                    </form>
-                </li>
+                <ul>
+                    <li><a href="/dashboard">Tableau de bord</a></li>
+                    <li><a href="/profil">Mon Profil</a></li>
+                    <li>
+                        <div class="notification-icon" onclick="toggleNotifications()">
+                            🔔
+                            @php
+                                $notificationsNonLues = auth()->user()->notifications()->where('lu', false)->count();
+                            @endphp
+                            @if($notificationsNonLues > 0)
+                            <span class="notification-badge">{{ $notificationsNonLues }}</span>
+                            @endif
+                        </div>
+                    </li>
+                    <li>
+                        <form action="/logout" method="POST" style="display: inline;">
+                            @csrf
+                            <button type="submit" style="background: none; border: none; color: white; cursor: pointer; font-size: 1rem;">Déconnexion</button>
+                        </form>
+                    </li>
+                </ul>
             @endguest
-        </ul>
+        </div>
         
         @auth
         <div id="notificationDropdown" class="notification-dropdown">
