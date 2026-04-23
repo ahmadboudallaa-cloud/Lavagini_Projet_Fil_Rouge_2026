@@ -66,6 +66,27 @@ class WebAdminController extends Controller
     public function supprimerLaveur($id)
     {
         $laveur = User::findOrFail($id);
+        
+        // Vérifier si le laveur a des missions en cours
+        $missionsEnCours = Mission::where('laveur_id', $id)
+            ->whereIn('statut', ['assignee', 'en_cours'])
+            ->count();
+        
+        if ($missionsEnCours > 0) {
+            return redirect('/admin/dashboard')->with('error', 'Impossible de supprimer ce laveur car il a des missions en cours.');
+        }
+        
+        // Supprimer les relations avant de supprimer le laveur
+        // Supprimer les missions terminées
+        Mission::where('laveur_id', $id)->delete();
+        
+        // Supprimer les évaluations
+        $laveur->evaluations()->delete();
+        
+        // Supprimer les notifications
+        $laveur->notifications()->delete();
+        
+        // Supprimer le laveur
         $laveur->delete();
 
         return redirect('/admin/dashboard')->with('success', 'Laveur supprimé avec succès !');
@@ -99,6 +120,32 @@ class WebAdminController extends Controller
     public function supprimerClient($id)
     {
         $client = User::findOrFail($id);
+        
+        // Vérifier si le client a des commandes en cours
+        $commandesEnCours = Commande::where('client_id', $id)
+            ->whereIn('statut', ['en_attente', 'assignee', 'en_cours'])
+            ->count();
+        
+        if ($commandesEnCours > 0) {
+            return redirect('/admin/dashboard')->with('error', 'Impossible de supprimer ce client car il a des commandes en cours.');
+        }
+        
+        // Supprimer les relations avant de supprimer le client
+        // Supprimer les commandes terminées et leurs relations
+        $commandes = Commande::where('client_id', $id)->get();
+        foreach ($commandes as $commande) {
+            // Supprimer mission, paiement, facture, evaluation liés
+            $commande->mission()->delete();
+            $commande->paiement()->delete();
+            $commande->facture()->delete();
+            $commande->evaluation()->delete();
+            $commande->delete();
+        }
+        
+        // Supprimer les notifications
+        $client->notifications()->delete();
+        
+        // Supprimer le client
         $client->delete();
 
         return redirect('/admin/dashboard')->with('success', 'Client supprimé avec succès !');
@@ -150,6 +197,15 @@ class WebAdminController extends Controller
             'commande_id' => 'required|exists:commandes,id',
             'laveur_id' => 'required|exists:users,id'
         ]);
+
+        // Vérifier si le laveur a déjà une mission en cours
+        $missionEnCours = Mission::where('laveur_id', $request->laveur_id)
+            ->whereIn('statut', ['assignee', 'en_cours'])
+            ->exists();
+
+        if ($missionEnCours) {
+            return redirect('/admin/dashboard')->with('error', '❌ Ce laveur a déjà une mission en cours. Il doit la terminer avant d\'en recevoir une nouvelle.');
+        }
 
         $mission = Mission::create([
             'commande_id' => $request->commande_id,
