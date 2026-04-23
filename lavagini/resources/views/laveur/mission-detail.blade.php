@@ -216,6 +216,11 @@
         </form>
         @elseif($mission->statut === 'en_cours')
         <a href="/laveur/missions/{{ $mission->id }}/terminer" class="btn btn-success">Terminer la mission</a>
+        @elseif($mission->statut === 'terminee' && $mission->commande->mode_paiement === 'fin_service' && $mission->commande->statut !== 'payee')
+        <form action="/paiement/fin-service/{{ $mission->commande->id }}" method="POST" style="display: inline;" onsubmit="return confirm('Confirmez-vous que le client a payé ?');">
+            @csrf
+            <button type="submit" class="btn btn-success">💵 Marquer comme payé</button>
+        </form>
         @endif
     </div>
 </div>

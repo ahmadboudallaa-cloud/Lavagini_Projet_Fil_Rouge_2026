@@ -1,223 +1,122 @@
-@extends('layouts.app')
+@extends('layouts.laveur')
 
 @section('title', 'Dashboard Laveur')
-
-@section('styles')
-<style>
-    .dashboard {
-        padding: 2rem 0;
-    }
-
-    .dashboard-header {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-    }
-
-    .dashboard-header h1 {
-        margin-bottom: 0.5rem;
-    }
-
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-
-    .stat-card h3 {
-        color: #27ae60;
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-card p {
-        color: #666;
-    }
-
-    .missions-list {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-bottom: 2rem;
-    }
-
-    .missions-list h2 {
-        margin-bottom: 1.5rem;
-        color: #2c3e50;
-    }
-
-    .mission-item {
-        border: 1px solid #eee;
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        background: #f8f9fa;
-    }
-
-    .mission-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .mission-info {
-        margin-bottom: 1rem;
-    }
-
-    .mission-info p {
-        margin: 0.3rem 0;
-    }
-
-    .mission-actions {
-        display: flex;
-        gap: 1rem;
-    }
-
-    .badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-    }
-
-    .badge-assignee {
-        background-color: #74b9ff;
-        color: #0984e3;
-    }
-
-    .badge-en-cours {
-        background-color: #fdcb6e;
-        color: #e17055;
-    }
-
-    .badge-terminee {
-        background-color: #55efc4;
-        color: #00b894;
-    }
-
-    .evaluations {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .evaluations h2 {
-        margin-bottom: 1.5rem;
-        color: #2c3e50;
-    }
-
-    .evaluation-item {
-        border-bottom: 1px solid #eee;
-        padding: 1rem 0;
-    }
-
-    .evaluation-item:last-child {
-        border-bottom: none;
-    }
-
-    .stars {
-        color: #f39c12;
-        font-size: 1.2rem;
-    }
-</style>
-@endsection
+@section('page-title', 'Tableau de bord')
 
 @section('content')
-<div class="container dashboard">
-    <div class="dashboard-header">
-        <h1>Bienvenue, {{ Auth::user()->name }}</h1>
-        <p>Tableau de bord Laveur</p>
-    </div>
+<h2 class="text-4xl font-bold mb-10">
+    Bienvenue, <span class="text-cyan-custom font-extrabold">{{ Auth::user()->name }}</span>
+</h2>
 
-    <div class="stats">
-        <div class="stat-card">
-            <h3>{{ $totalMissions }}</h3>
-            <p>Missions totales</p>
-        </div>
-        <div class="stat-card">
-            <h3>{{ $missionsEnCours }}</h3>
-            <p>Missions en cours</p>
-        </div>
-        <div class="stat-card">
-            <h3>{{ number_format($noteMoyenne, 1) }}</h3>
-            <p>Note moyenne</p>
-        </div>
-        <div class="stat-card">
-            <h3>-</h3>
-            <p>Revenus du mois</p>
-        </div>
+<div class="grid grid-cols-4 gap-6 mb-12">
+    <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+        <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $totalMissions ?? 0 }}</span>
+        <span class="text-gray-300 text-sm text-center">Missions totales</span>
     </div>
-
-    <div class="missions-list">
-        <h2>Mes missions</h2>
-        
-        @forelse($missions as $mission)
-        <div class="mission-item">
-            <div class="mission-header">
-                <strong>Mission #M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</strong>
-                <span class="badge badge-{{ $mission->statut }}">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span>
-            </div>
-            <div class="mission-info">
-                <p><strong>Client:</strong> {{ $mission->commande->client->name }}</p>
-                <p><strong>Adresse:</strong> {{ $mission->commande->adresse_service }}</p>
-                <p><strong>Véhicules:</strong> {{ $mission->commande->nombre_vehicules }}</p>
-                <p><strong>Date:</strong> {{ $mission->created_at->format('d/m/Y à H:i') }}</p>
-                @if($mission->temps_passe)
-                <p><strong>Temps passé:</strong> {{ $mission->temps_passe }} minutes</p>
-                @endif
-            </div>
-            <div class="mission-actions">
-                @if($mission->statut === 'assignee')
-                <form action="/laveur/missions/{{ $mission->id }}/demarrer" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-success">Démarrer</button>
-                </form>
-                @elseif($mission->statut === 'en_cours')
-                <a href="/laveur/missions/{{ $mission->id }}/terminer" class="btn btn-success">Terminer</a>
-                @endif
-                <a href="/laveur/missions/{{ $mission->id }}" class="btn btn-primary">Voir détails</a>
-            </div>
-        </div>
-        @empty
-        <p>Aucune mission pour le moment.</p>
-        @endforelse
+    <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center border-2 border-cyan-custom">
+        <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $missionsEnCours ?? 0 }}</span>
+        <span class="text-gray-300 text-sm text-center">En cours</span>
     </div>
+    <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+        <span class="text-cyan-custom text-4xl font-bold mb-2">{{ number_format($noteMoyenne ?? 0, 1) }}</span>
+        <span class="text-gray-300 text-sm text-center">Note moyenne</span>
+    </div>
+    <div class="bg-dark-card rounded-2xl p-6 flex flex-col items-center justify-center">
+        <span class="text-cyan-custom text-4xl font-bold mb-2">{{ $missions->where('statut', 'terminee')->count() ?? 0 }}</span>
+        <span class="text-gray-300 text-sm text-center">Terminees</span>
+    </div>
+</div>
 
-    <div class="evaluations">
-        <h2>Mes évaluations</h2>
-        
-        @forelse($dernieresEvaluations as $evaluation)
-        <div class="evaluation-item">
-            <div class="stars">
-                @for($i = 1; $i <= 5; $i++)
-                    @if($i <= $evaluation->note)
-                        ★
+<div class="bg-dark-card rounded-[40px] p-10 shadow-2xl mb-12">
+    <h3 class="text-cyan-custom text-2xl font-bold mb-8">Mes missions</h3>
+
+    <table class="w-full text-left">
+        <thead>
+            <tr class="text-xl border-b border-gray-800">
+                <th class="pb-4 font-semibold">Mission</th>
+                <th class="pb-4 font-semibold">Client</th>
+                <th class="pb-4 font-semibold">Vehicules</th>
+                <th class="pb-4 font-semibold">Adresse</th>
+                <th class="pb-4 font-semibold text-center">Statut</th>
+                <th class="pb-4 font-semibold text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-lg">
+            @forelse($missions as $mission)
+            <tr class="hover:bg-dark-hover transition duration-150 border-b border-gray-800/50 last:border-0">
+                <td class="py-6">
+                    <span class="block">#M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</span>
+                    <span class="text-sm text-gray-500">{{ $mission->created_at->format('d/m/Y') }}</span>
+                </td>
+                <td class="py-6">{{ $mission->commande->client->name }}</td>
+                <td class="py-6">{{ $mission->commande->nombre_vehicules }}</td>
+                <td class="py-6 italic text-gray-400 truncate max-w-[200px]">{{ $mission->commande->adresse_service }}</td>
+                <td class="py-6 text-center align-middle">
+                    @if($mission->statut === 'assignee')
+                        <span class="inline-flex min-w-[118px] items-center justify-center bg-blue-600 text-white px-5 py-1.5 rounded-full font-bold text-sm">Assignee</span>
+                    @elseif($mission->statut === 'en_cours')
+                        <span class="inline-flex min-w-[118px] items-center justify-center bg-yellow-500 text-black px-5 py-1.5 rounded-full font-bold text-sm">En cours</span>
+                    @elseif($mission->statut === 'terminee')
+                        <span class="inline-flex min-w-[118px] items-center justify-center bg-cyan-custom text-black px-5 py-1.5 rounded-full font-bold text-sm">Terminee</span>
                     @else
-                        ☆
+                        <span class="inline-flex min-w-[118px] items-center justify-center bg-gray-500 text-white px-5 py-1.5 rounded-full font-bold text-sm">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span>
                     @endif
-                @endfor
+                </td>
+                <td class="py-6 text-center align-middle">
+                    <div class="flex justify-center items-center gap-2">
+                        @if($mission->statut === 'assignee')
+                            <form action="/laveur/missions/{{ $mission->id }}/demarrer" method="POST" class="inline m-0">
+                                @csrf
+                                <button type="submit" class="bg-green-500 text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-green-400">Demarrer</button>
+                            </form>
+                        @elseif($mission->statut === 'en_cours')
+                            <form action="/laveur/missions/{{ $mission->id }}/terminer" method="POST" class="inline m-0">
+                                @csrf
+                                <button type="submit" class="bg-cyan-custom text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-[#00a3d9]">Terminer</button>
+                            </form>
+                        @endif
+
+                        <a href="/laveur/missions/{{ $mission->id }}" class="bg-white text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-gray-200 inline-block">Details</a>
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="text-center py-10 text-gray-500 italic">Aucune mission pour le moment.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+<div class="bg-dark-card rounded-[40px] p-10 shadow-2xl">
+    <h3 class="text-cyan-custom text-2xl font-bold mb-8">Mes evaluations recentes</h3>
+
+    <div class="grid grid-cols-2 gap-6">
+        @forelse($dernieresEvaluations as $evaluation)
+            <div class="bg-[#2b2b2b] rounded-3xl p-6 border border-gray-700 hover:border-cyan-custom transition duration-300">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <strong class="text-white text-lg block">{{ $evaluation->client->name }}</strong>
+                        <span class="text-gray-400 text-sm">{{ $evaluation->created_at->format('d/m/Y') }}</span>
+                    </div>
+                    <div class="text-cyan-custom text-2xl tracking-widest">
+                        @for($i = 1; $i <= 5; $i++)
+                            {{ $i <= $evaluation->note ? '★' : '☆' }}
+                        @endfor
+                    </div>
+                </div>
+
+                @if($evaluation->commentaire)
+                    <p class="text-gray-300 italic">"{{ $evaluation->commentaire }}"</p>
+                @else
+                    <p class="text-gray-600 italic">Aucun commentaire laisse par le client.</p>
+                @endif
             </div>
-            <p><strong>{{ $evaluation->client->name }}</strong> - {{ $evaluation->created_at->format('d/m/Y') }}</p>
-            @if($evaluation->commentaire)
-            <p>"{{ $evaluation->commentaire }}"</p>
-            @endif
-        </div>
         @empty
-        <p>Aucune évaluation pour le moment.</p>
+            <div class="col-span-2 text-center py-8 text-gray-500 italic">
+                Aucune evaluation pour le moment.
+            </div>
         @endforelse
     </div>
 </div>
