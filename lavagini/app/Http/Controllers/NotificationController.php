@@ -15,7 +15,7 @@ class NotificationController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
-        return response()->json($notifications);
+        return view('notifications.index', compact('notifications'));
     }
 
     // Voir les notifications non lues
@@ -55,5 +55,15 @@ class NotificationController extends Controller
         return response()->json([
             'message' => 'Toutes les notifications sont marquées comme lues'
         ]);
+    }
+
+    // Obtenir le nombre de notifications non lues
+    public function compterNonLues()
+    {
+        $count = Notification::where('user_id', Auth::id())
+            ->where('lu', false)
+            ->count();
+        
+        return response()->json(['count' => $count]);
     }
 }

@@ -19,6 +19,12 @@ Route::get('/register', [WebAuthController::class, 'showRegister']);
 Route::post('/register', [WebAuthController::class, 'register']);
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
+// Routes de réinitialisation de mot de passe
+Route::get('/forgot-password', [WebAuthController::class, 'showForgotPassword']);
+Route::post('/forgot-password', [WebAuthController::class, 'sendResetLink']);
+Route::get('/reset-password/{token}', [WebAuthController::class, 'showResetPassword']);
+Route::post('/reset-password', [WebAuthController::class, 'resetPassword']);
+
 // Routes protégées
 Route::middleware('auth')->group(function () {
     
@@ -36,7 +42,10 @@ Route::middleware('auth')->group(function () {
     });
     
     // Routes pour les notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'mesNotifications']);
     Route::put('/notifications/{id}/lire', [\App\Http\Controllers\NotificationController::class, 'marquerCommeLue']);
+    Route::post('/notifications/marquer-tout-lu', [\App\Http\Controllers\NotificationController::class, 'marquerToutCommeLu']);
+    Route::get('/notifications/count', [\App\Http\Controllers\NotificationController::class, 'compterNonLues']);
     
     // Routes pour les factures
     Route::get('/factures/{id}/telecharger', [\App\Http\Controllers\FactureController::class, 'telecharger']);
@@ -46,6 +55,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil', [\App\Http\Controllers\Web\ProfilController::class, 'show']);
     Route::put('/profil', [\App\Http\Controllers\Web\ProfilController::class, 'update']);
     Route::delete('/profil/photo/supprimer', [\App\Http\Controllers\Web\ProfilController::class, 'supprimerPhoto']);
+    
+    // Routes pour les paiements
+    Route::get('/paiement/stripe/{commandeId}', [\App\Http\Controllers\Web\PaiementController::class, 'creerSessionPaiement']);
+    Route::post('/paiement/stripe/{commandeId}', [\App\Http\Controllers\Web\PaiementController::class, 'creerSessionPaiement']);
+    Route::get('/paiement/success', [\App\Http\Controllers\Web\PaiementController::class, 'paiementSuccess']);
+    Route::get('/paiement/cancel', [\App\Http\Controllers\Web\PaiementController::class, 'paiementCancel']);
+    Route::post('/paiement/fin-service/{commandeId}', [\App\Http\Controllers\Web\PaiementController::class, 'marquerCommePayeFinService']);
     
     // Routes Client
     Route::middleware('role:client')->group(function () {

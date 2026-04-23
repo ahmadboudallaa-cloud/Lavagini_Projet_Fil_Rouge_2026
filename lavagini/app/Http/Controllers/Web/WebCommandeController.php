@@ -47,6 +47,11 @@ class WebCommandeController extends Controller
             'type' => 'commande'
         ]);
 
+        // Si paiement en ligne, rediriger vers Stripe
+        if ($request->mode_paiement === 'en_ligne') {
+            return redirect('/paiement/stripe/' . $commande->id);
+        }
+
         return redirect('/dashboard')->with('success', 'Commande créée avec succès ! Montant: ' . $montant . '€');
     }
 
