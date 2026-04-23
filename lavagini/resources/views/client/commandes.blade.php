@@ -1,180 +1,89 @@
-@extends('layouts.app')
+@extends('layouts.client')
 
 @section('title', 'Mes commandes')
-
-@section('styles')
-<style>
-    .commandes-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 2rem;
-    }
-
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-    }
-
-    .page-header h1 {
-        margin-bottom: 0.5rem;
-    }
-
-    .commandes-grid {
-        display: grid;
-        gap: 1.5rem;
-    }
-
-    .commande-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: transform 0.3s;
-    }
-
-    .commande-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-
-    .commande-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #eee;
-    }
-
-    .commande-id {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #2c3e50;
-    }
-
-    .badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-    }
-
-    .badge-demande {
-        background-color: #ffeaa7;
-        color: #d63031;
-    }
-
-    .badge-assignee {
-        background-color: #74b9ff;
-        color: #0984e3;
-    }
-
-    .badge-en_cours {
-        background-color: #fdcb6e;
-        color: #e17055;
-    }
-
-    .badge-terminee {
-        background-color: #55efc4;
-        color: #00b894;
-    }
-
-    .badge-payee {
-        background-color: #00b894;
-        color: white;
-    }
-
-    .commande-info {
-        margin-bottom: 1rem;
-    }
-
-    .commande-info p {
-        margin: 0.5rem 0;
-        color: #555;
-    }
-
-    .commande-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .btn-small {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .empty-state h3 {
-        color: #666;
-        margin-bottom: 1rem;
-    }
-</style>
-@endsection
+@section('page-title', 'Mes Commandes')
 
 @section('content')
-<div class="commandes-container">
-    <div class="page-header">
-        <h1>Mes commandes</h1>
-        <p>Historique complet de vos commandes</p>
-    </div>
 
-    <div class="commandes-grid">
+<div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
+    <h3 class="text-cyan-custom text-2xl font-bold mb-8">Historique de mes commandes</h3>
+    
+    <div class="space-y-4">
         @forelse($commandes as $commande)
-        <div class="commande-card">
-            <div class="commande-header">
-                <span class="commande-id">Commande #{{ str_pad($commande->id, 3, '0', STR_PAD_LEFT) }}</span>
-                <span class="badge badge-{{ $commande->statut }}">{{ ucfirst(str_replace('_', ' ', $commande->statut)) }}</span>
+        <div class="border border-gray-700 rounded-xl p-6 hover:bg-dark-hover transition">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center space-x-3">
+                    <strong class="text-white text-xl">Commande #{{ str_pad($commande->id, 3, '0', STR_PAD_LEFT) }}</strong>
+                    
+                    @if($commande->statut === 'payee' || $commande->statut === 'payée')
+                        <span class="bg-cyan-custom text-black px-3 py-1 rounded-full text-xs font-bold">Payée</span>
+                    @elseif($commande->statut === 'demande')
+                        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold">Demande</span>
+                    @elseif($commande->statut === 'en_cours')
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">En cours</span>
+                    @elseif($commande->statut === 'terminee')
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">Terminée</span>
+                    @else
+                        <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-xs font-bold">{{ ucfirst(str_replace('_', ' ', $commande->statut)) }}</span>
+                    @endif
+                </div>
+                <span class="text-gray-400 text-sm">{{ $commande->created_at->format('d/m/Y à H:i') }}</span>
             </div>
 
-            <div class="commande-info">
-                <p><strong>📍 Adresse :</strong> {{ $commande->adresse_service }}</p>
-                <p><strong>🚗 Véhicules :</strong> {{ $commande->nombre_vehicules }}</p>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">📍 Adresse</p>
+                    <p class="text-white">{{ $commande->adresse_service }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">🚗 Véhicules</p>
+                    <p class="text-white">{{ $commande->nombre_vehicules }} véhicule(s)</p>
+                </div>
                 @if($commande->zone)
-                <p><strong>🗺️ Zone :</strong> {{ $commande->zone->nom }} - {{ $commande->zone->ville }}</p>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">🗺️ Zone</p>
+                    <p class="text-white">{{ $commande->zone->nom }} - {{ $commande->zone->ville }}</p>
+                </div>
                 @endif
-                <p><strong>📅 Date :</strong> {{ $commande->created_at->format('d/m/Y à H:i') }}</p>
                 @if($commande->mission)
-                <p><strong>👨‍🔧 Laveur :</strong> {{ $commande->mission->laveur->name }}</p>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">👨‍🔧 Laveur</p>
+                    <p class="text-white">{{ $commande->mission->laveur->name }}</p>
+                </div>
                 @endif
                 @if($commande->montant)
-                <p><strong>💰 Montant :</strong> {{ $commande->montant }} €</p>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">💰 Montant</p>
+                    <p class="text-cyan-custom font-bold text-lg">{{ $commande->montant }} €</p>
+                </div>
                 @endif
             </div>
 
-            <div class="commande-actions">
-                <a href="/client/commandes/{{ $commande->id }}" class="btn btn-primary btn-small">Voir détails</a>
+            <div class="flex space-x-3 pt-4 border-t border-gray-700">
+                <a href="/client/commandes/{{ $commande->id }}" class="bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-gray-200">Voir détails</a>
                 
                 @if(($commande->statut === 'terminee' || $commande->statut === 'payee') && !$commande->evaluation && $commande->mission)
-                <a href="/client/commandes/{{ $commande->id }}" class="btn btn-success btn-small">⭐ Évaluer</a>
+                <a href="/client/commandes/{{ $commande->id }}" class="bg-cyan-custom text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-cyan-400">⭐ Évaluer</a>
                 @endif
 
                 @if($commande->evaluation)
-                <span class="btn btn-small" style="background: #ddd; cursor: default;">✅ Évaluée</span>
+                <span class="bg-green-600 text-white px-5 py-2 rounded-full text-sm font-bold">✅ Évaluée</span>
                 @endif
             </div>
         </div>
         @empty
-        <div class="empty-state">
-            <h3>Aucune commande</h3>
-            <p>Vous n'avez pas encore passé de commande</p>
-            <a href="/client/dashboard" class="btn btn-primary" style="margin-top: 1rem;">Créer une commande</a>
+        <div class="text-center py-12">
+            <div class="text-gray-500 mb-4">
+                <svg class="w-20 h-20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+            <h3 class="text-white text-xl font-bold mb-2">Aucune commande</h3>
+            <p class="text-gray-400 mb-6">Vous n'avez pas encore passé de commande</p>
+            <a href="/client/dashboard" class="bg-cyan-custom text-black px-6 py-3 rounded-full font-bold hover:bg-cyan-400">Créer une commande</a>
         </div>
         @endforelse
     </div>
-
-    <div style="margin-top: 2rem;">
-        <a href="/client/dashboard" class="btn btn-primary">Retour au dashboard</a>
-    </div>
 </div>
+
 @endsection

@@ -292,6 +292,13 @@
 
     <!-- Actions -->
     <div class="actions">
+        @if($commande->statut === 'terminee' && $commande->mode_paiement === 'en_ligne')
+        <form action="/paiement/stripe/{{ $commande->id }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="btn btn-success">💳 Payer maintenant avec Stripe</button>
+        </form>
+        @endif
+        
         <a href="/client/commandes" class="btn btn-primary">Retour à mes commandes</a>
         <a href="/client/dashboard" class="btn btn-success">Retour au dashboard</a>
     </div>
