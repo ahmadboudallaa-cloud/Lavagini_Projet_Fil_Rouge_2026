@@ -88,7 +88,7 @@
         }
         .hero-right {
             flex: 1;
-            background: url('{{ asset('assets/image1.jpg') }}') center/cover no-repeat;
+            background: url('{{ asset('assets/acceille.jpg') }}?v=2') center/cover no-repeat;
             position: relative;
         }
         .hero-right::after {

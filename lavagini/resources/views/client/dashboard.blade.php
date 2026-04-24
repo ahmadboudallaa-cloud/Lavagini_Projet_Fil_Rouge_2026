@@ -5,13 +5,149 @@
 
 @section('styles')
 <style>
-    /* Style de la modale en mode Sombre pour coller au design */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; padding: 2rem 0; }
+    /* Responsive Dashboard Client - Optimisé */
+    @media (max-width: 1024px) {
+        .text-4xl { font-size: 2rem !important; }
+        .text-2xl { font-size: 1.5rem !important; }
+    }
+    
+    @media (max-width: 768px) {
+        /* Textes */
+        .text-4xl { font-size: 1.75rem !important; }
+        .text-3xl { font-size: 1.5rem !important; }
+        .text-2xl { font-size: 1.25rem !important; }
+        .text-xl { font-size: 1.125rem !important; }
+        
+        /* Grilles */
+        .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr !important; }
+        
+        /* Espacements */
+        .mb-10, .mb-12 { margin-bottom: 2rem !important; }
+        .gap-6 { gap: 1rem !important; }
+        .p-8 { padding: 1.5rem !important; }
+        .p-6 { padding: 1.25rem !important; }
+        
+        /* Bordures */
+        .rounded-\[30px\] { border-radius: 20px !important; }
+        .rounded-2xl { border-radius: 16px !important; }
+        
+        /* Commandes - Cartes responsive */
+        #commandes .flex.justify-between,
+        #factures .flex.justify-between {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+        
+        #commandes .grid,
+        #factures .grid {
+            grid-template-columns: 1fr !important;
+        }
+        
+        #factures .flex.items-center.space-x-6 {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            width: 100% !important;
+        }
+        
+        #factures .text-right {
+            text-align: left !important;
+        }
+        
+        /* Profil responsive */
+        #profil .flex.items-center.space-x-6 {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 1rem !important;
+        }
+        
+        #profil .grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        
+        #profil .flex.justify-end {
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 0.75rem !important;
+        }
+        
+        #profil .flex.justify-end button {
+            width: 100% !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        /* Textes */
+        .text-4xl { font-size: 1.5rem !important; }
+        .text-3xl { font-size: 1.25rem !important; }
+        .text-2xl { font-size: 1.125rem !important; }
+        .text-xl { font-size: 1rem !important; }
+        .text-lg { font-size: 0.95rem !important; }
+        
+        /* Espacements */
+        .p-8 { padding: 1rem !important; }
+        .p-6 { padding: 0.875rem !important; }
+        .p-4 { padding: 0.75rem !important; }
+        .px-5 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+        .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+        .mb-8 { margin-bottom: 1.5rem !important; }
+        .mb-6 { margin-bottom: 1rem !important; }
+        .space-y-6 > * + * { margin-top: 1rem !important; }
+        .space-y-4 > * + * { margin-top: 0.75rem !important; }
+        
+        /* Flex responsive */
+        .flex.justify-between.items-center { 
+            flex-direction: column !important; 
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+        
+        .flex.items-center.space-x-3,
+        .flex.items-center.space-x-4,
+        .flex.items-center.space-x-6 {
+            flex-wrap: wrap !important;
+        }
+        
+        /* Boutons */
+        .flex.space-x-3 {
+            flex-direction: column !important;
+            width: 100% !important;
+        }
+        
+        .flex.space-x-3 a,
+        .flex.space-x-3 button,
+        .flex.space-x-3 span {
+            width: 100% !important;
+            text-align: center !important;
+            justify-content: center !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Textes */
+        .text-4xl { font-size: 1.25rem !important; }
+        .text-3xl { font-size: 1.125rem !important; }
+        .text-2xl { font-size: 1rem !important; }
+        .text-xl { font-size: 0.95rem !important; }
+        
+        /* Icônes */
+        .w-10 { width: 2rem !important; height: 2rem !important; }
+        .w-8 { width: 1.75rem !important; height: 1.75rem !important; }
+        .w-6 { width: 1.25rem !important; height: 1.25rem !important; }
+        
+        /* Profil */
+        #profil .w-24 { width: 5rem !important; height: 5rem !important; }
+        #profil .w-16 { width: 3.5rem !important; height: 3.5rem !important; }
+    }
+    
+    /* Modale responsive */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; overflow-y: auto; padding: 2rem 0; }
     .modal-content { background: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 2.5rem; border-radius: 20px; border: 1px solid #333; position: relative; color: white; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
     .close { font-size: 2rem; cursor: pointer; color: #999; transition: color 0.2s; }
     .close:hover { color: #00C2FF; }
-    
     .form-group { margin-bottom: 1.5rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; color: #ccc; font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea { 
@@ -20,6 +156,13 @@
     .form-group input:focus, .form-group select:focus { border-color: #00C2FF; }
     .btn-primary { background: #00C2FF; color: black; font-weight: bold; border-radius: 10px; padding: 1rem; width: 100%; cursor: pointer; transition: background 0.3s; border: none; }
     .btn-primary:hover { background: #0099cc; }
+    
+    @media (max-width: 640px) {
+        .modal { padding: 1rem 0; }
+        .modal-content { padding: 1.5rem; margin: 0 1rem; max-width: calc(100% - 2rem); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group input, .form-group select, .form-group textarea { padding: 0.65rem 0.85rem; font-size: 0.95rem; }
+    }
 </style>
 @endsection
 
@@ -172,7 +315,7 @@
                         </div>
                         <div>
                             <p class="text-gray-400 text-xs">Montant total</p>
-                            <p class="text-cyan-custom font-bold text-xl">{{ $commande->montant }} €</p>
+                            <p class="text-cyan-custom font-bold text-xl">{{ $commande->montant }} DH</p>
                         </div>
                     </div>
                     @endif
@@ -187,7 +330,7 @@
                     </a>
                     
                     @if(($commande->statut === 'terminee' || $commande->statut === 'payee') && !$commande->evaluation && $commande->mission)
-                    <a href="/client/commandes/{{ $commande->id }}" class="bg-cyan-custom text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-cyan-400 transition">⭐ Évaluer</a>
+                    <a href="/client/commandes/{{ $commande->id }}/evaluation" class="bg-cyan-custom text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-cyan-400 transition">⭐ Évaluer</a>
                     @endif
 
                     @if($commande->evaluation)
@@ -253,7 +396,7 @@
                     <div class="flex items-center space-x-6">
                         <div class="text-right">
                             <p class="text-gray-400 text-sm mb-1">Montant</p>
-                            <p class="text-cyan-custom text-3xl font-bold">{{ $facture->montant }}€</p>
+                            <p class="text-cyan-custom text-3xl font-bold">{{ $facture->montant }} DH</p>
                         </div>
                         <a href="/factures/{{ $facture->id }}/telecharger" class="bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -369,15 +512,15 @@
             <div class="form-group">
                 <label for="type_service">Type de service</label>
                 <select id="type_service" name="type_service" required onchange="calculerMontant()">
-                    <option value="lavage_standard">Lavage Standard - 25€/véhicule</option>
-                    <option value="lavage_complet">Lavage Complet - 45€/véhicule</option>
-                    <option value="lavage_premium">Lavage Premium - 65€/véhicule</option>
+                    <option value="lavage_standard">Lavage Standard - 100 DH/véhicule</option>
+                    <option value="lavage_complet">Lavage Complet - 150 DH/véhicule</option>
+                    <option value="lavage_premium">Lavage Premium - 250 DH/véhicule</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="adresse_service">Adresse complète</label>
-                <input type="text" id="adresse_service" name="adresse_service" placeholder="123 rue de Paris, 75000" required>
+                <input type="text" id="adresse_service" name="adresse_service" placeholder="123 boulevard Zerktouni, Casablanca 20000" required>
             </div>
 
             <div class="form-group">
@@ -405,7 +548,7 @@
 
             <div class="bg-black p-4 rounded-xl mb-6 text-center border border-gray-700">
                 <span class="text-gray-400 uppercase text-xs tracking-wider block mb-1">Montant estimé</span>
-                <span id="montant_estime" class="text-cyan-custom text-3xl font-extrabold">25€</span>
+                <span id="montant_estime" class="text-cyan-custom text-3xl font-extrabold">100 DH</span>
             </div>
 
             <button type="submit" class="btn-primary">Confirmer la commande</button>
@@ -422,9 +565,9 @@
     function calculerMontant() {
         const nbVehicules = document.getElementById('nombre_vehicules').value || 1;
         const typeService = document.getElementById('type_service').value;
-        const tarifs = { 'lavage_standard': 25, 'lavage_complet': 45, 'lavage_premium': 65 };
+        const tarifs = { 'lavage_standard': 100, 'lavage_complet': 150, 'lavage_premium': 250 };
         const montant = nbVehicules * tarifs[typeService];
-        document.getElementById('montant_estime').textContent = montant + '€';
+        document.getElementById('montant_estime').textContent = montant + ' DH';
     }
     
     function previewImage(event) {

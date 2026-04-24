@@ -3,6 +3,60 @@
 @section('title', 'Mon Profil')
 @section('page-title', 'Mon Profil')
 
+@section('styles')
+<style>
+    /* Responsive Profil */
+    @media (max-width: 768px) {
+        .flex.items-center.space-x-6 {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 1rem !important;
+        }
+        
+        .grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        
+        .flex.justify-end {
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 0.75rem !important;
+        }
+        
+        .flex.justify-end a,
+        .flex.justify-end button {
+            width: 100% !important;
+        }
+        
+        .space-y-6 {
+            gap: 1rem !important;
+        }
+        
+        .p-8 {
+            padding: 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .w-24 {
+            width: 5rem !important;
+            height: 5rem !important;
+        }
+        
+        .w-16 {
+            width: 3.5rem !important;
+            height: 3.5rem !important;
+        }
+        
+        .p-8 {
+            padding: 1rem !important;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
 
 <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">

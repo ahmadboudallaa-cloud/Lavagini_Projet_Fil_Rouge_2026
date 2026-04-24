@@ -29,6 +29,7 @@
 
         a { text-decoration: none; color: inherit; }
         ul { list-style: none; }
+        img { max-width: 100%; height: auto; }
 
         /* ================= NAVBAR ================= */
         .navbar-wrapper {
@@ -50,6 +51,35 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 15px 8px 30px;
+            flex-wrap: wrap;
+        }
+        
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .burger-menu span {
+            width: 25px;
+            height: 3px;
+            background: var(--cyan);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .burger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+        
+        .burger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .burger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
         }
 
         .nav-brand {
@@ -64,6 +94,20 @@
             gap: 25px;
             font-size: 15px;
             font-weight: 500;
+            transition: max-height 0.3s ease;
+        }
+        
+        .nav-links.mobile {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            text-align: center;
+            padding: 15px 0;
+            gap: 15px;
+        }
+        
+        .nav-links.mobile.active {
+            display: flex;
         }
 
         .nav-buttons {
@@ -84,7 +128,7 @@
         .hero {
             height: 100vh;
             min-height: 600px;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{{ asset('assets/image1.jpg') }}') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('{{ asset('assets/acceille.jpg') }}') center/cover no-repeat;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -94,7 +138,7 @@
         }
 
         .hero h1 {
-            font-size: 65px;
+            font-size: clamp(32px, 8vw, 65px);
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 20px;
@@ -103,10 +147,11 @@
         
         .hero p {
             max-width: 650px;
-            font-size: 18px;
+            font-size: clamp(14px, 3vw, 18px);
             color: #e0e0e0;
             margin-bottom: 30px;
             line-height: 1.5;
+            padding: 0 15px;
         }
 
         .btn-hero {
@@ -114,8 +159,9 @@
             color: #fff;
             padding: 15px 40px;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: clamp(14px, 3vw, 18px);
             font-weight: 700;
+            display: inline-block;
         }
 
         /* ================= TITRES SECTIONS ================= */
@@ -130,8 +176,9 @@
             margin-bottom: 10px;
         }
         .section-header h2 {
-            font-size: 36px;
+            font-size: clamp(24px, 5vw, 36px);
             font-weight: 800;
+            padding: 0 15px;
         }
 
         /* ================= TIMELINE (PARTIE SERVICES) ================= */
@@ -139,7 +186,7 @@
             position: relative;
             max-width: 960px;
             margin: 0 auto 100px;
-            padding: 20px 0;
+            padding: 20px 15px;
             display: flex;
             flex-direction: column;
             gap: 70px;
@@ -249,8 +296,14 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            min-width: 180px;
+            flex-shrink: 0;
         }
-        .col-services { flex: 1.6; }
+        .col-services { 
+            flex: 1.6;
+            min-width: 250px;
+            flex-shrink: 0;
+        }
 
         .pill-header {
             position: absolute;
@@ -324,9 +377,11 @@
         /* ================= FOOTER ================= */
         .footer {
             background-color: var(--footer-bg);
-            padding: 50px 10%;
+            padding: 50px 5%;
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
         }
 
         .footer-col h4 {
@@ -376,6 +431,425 @@
         }
         .contact-icon svg { width: 20px; height: 20px; fill: var(--footer-bg); }
 
+        /* ================= RESPONSIVE ================= */
+        
+        /* Tablettes (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .navbar {
+                width: 95%;
+                padding: 8px 15px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+                font-size: 14px;
+            }
+            
+            .timeline-card {
+                width: calc(50% - 30px);
+                height: 140px;
+            }
+            
+            .timeline-content h4 {
+                font-size: 14px;
+            }
+            
+            .timeline-content p {
+                font-size: 11px;
+            }
+            
+            .pricing-table-wrapper {
+                margin: 100px 15px 40px;
+            }
+            
+            .pill-header h4 {
+                font-size: 28px;
+            }
+            
+            .row-item {
+                font-size: 13px;
+            }
+        }
+        
+        /* Tablettes petites et grands téléphones (481px - 768px) */
+        @media (max-width: 768px) {
+            .navbar-wrapper {
+                top: 10px;
+            }
+            
+            .navbar {
+                width: 95%;
+                padding: 10px 15px;
+                border-radius: 25px;
+                justify-content: space-between;
+            }
+            
+            .nav-brand {
+                order: 1;
+            }
+            
+            .burger-menu {
+                display: flex;
+                order: 2;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .nav-links.mobile {
+                order: 4;
+                width: 100%;
+            }
+            
+            .nav-buttons {
+                order: 3;
+                gap: 8px;
+            }
+            
+            .nav-buttons .btn {
+                padding: 8px 18px;
+                font-size: 13px;
+            }
+            
+            .hero {
+                height: auto;
+                min-height: 500px;
+                padding: 120px 20px 60px;
+            }
+            
+            .hero h1 {
+                font-size: clamp(28px, 7vw, 45px);
+            }
+            
+            .section-header {
+                margin: 60px 0 40px;
+            }
+            
+            .timeline {
+                gap: 50px;
+                padding: 20px 10px;
+            }
+            
+            .timeline-line {
+                display: none;
+            }
+            
+            .timeline-item,
+            .timeline-item.right {
+                justify-content: center;
+            }
+            
+            .timeline-card {
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+                min-height: 120px;
+                flex-direction: column !important;
+            }
+            
+            .timeline-card img {
+                width: 100%;
+                height: 150px;
+            }
+            
+            .timeline-content {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .timeline-dot {
+                display: none;
+            }
+            
+            .pricing-table-wrapper {
+                margin: 80px 10px 30px;
+                display: flex;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 0 0 12px 12px;
+            }
+            
+            .pricing-table-wrapper::-webkit-scrollbar {
+                height: 8px;
+            }
+            
+            .pricing-table-wrapper::-webkit-scrollbar-track {
+                background: #1a1a1a;
+                border-radius: 4px;
+            }
+            
+            .pricing-table-wrapper::-webkit-scrollbar-thumb {
+                background: var(--cyan);
+                border-radius: 4px;
+            }
+            
+            .col {
+                min-width: 150px;
+            }
+            
+            .col-services {
+                min-width: 200px;
+            }
+            
+            .pill-header {
+                top: -70px;
+                height: 110px;
+            }
+            
+            .pill-header h4 {
+                font-size: 24px;
+            }
+            
+            .pill-header p {
+                font-size: 10px;
+            }
+            
+            .header-services {
+                top: -50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            
+            .row-item {
+                height: 28px;
+                font-size: 11px;
+            }
+            
+            .footer {
+                flex-direction: column;
+                padding: 40px 5%;
+                gap: 30px;
+            }
+            
+            .footer-col {
+                width: 100%;
+            }
+        }
+        
+        /* Téléphones (320px - 480px) */
+        @media (max-width: 480px) {
+            .navbar {
+                width: 95%;
+                padding: 8px 10px;
+                border-radius: 20px;
+            }
+            
+            .nav-brand img {
+                height: 35px;
+            }
+            
+            .nav-links {
+                font-size: 12px;
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 8px 18px;
+                font-size: 12px;
+            }
+            
+            .hero {
+                min-height: 450px;
+                padding: 100px 15px 50px;
+            }
+            
+            .hero h1 {
+                font-size: clamp(24px, 8vw, 36px);
+                margin-bottom: 15px;
+            }
+            
+            .hero p {
+                font-size: 14px;
+                margin-bottom: 25px;
+            }
+            
+            .btn-hero {
+                padding: 12px 30px;
+                font-size: 14px;
+            }
+            
+            .section-header {
+                margin: 50px 0 30px;
+            }
+            
+            .section-header h3 {
+                font-size: 14px;
+            }
+            
+            .section-header h2 {
+                font-size: 22px;
+            }
+            
+            .timeline {
+                gap: 40px;
+                margin-bottom: 60px;
+            }
+            
+            .timeline-card {
+                max-width: 100%;
+                min-height: 100px;
+            }
+            
+            .timeline-card img {
+                height: 120px;
+            }
+            
+            .timeline-content {
+                padding: 12px;
+            }
+            
+            .timeline-content h4 {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+            
+            .timeline-content p {
+                font-size: 11px;
+            }
+            
+            .pricing-section {
+                padding-bottom: 60px;
+            }
+            
+            .pricing-table-wrapper {
+                margin: 70px 5px 25px;
+                overflow-x: auto;
+                display: flex;
+            }
+            
+            .col {
+                min-width: 130px;
+            }
+            
+            .col-services {
+                min-width: 180px;
+            }
+            
+            .pill-header {
+                top: -60px;
+                height: 100px;
+                border-radius: 50px 50px 0 0;
+            }
+            
+            .pill-header h4 {
+                font-size: 20px;
+            }
+            
+            .pill-header p {
+                font-size: 9px;
+            }
+            
+            .header-services {
+                top: -45px;
+                height: 45px;
+                font-size: 20px;
+            }
+            
+            .row-list {
+                padding-top: 45px;
+            }
+            
+            .row-item {
+                height: 26px;
+                font-size: 10px;
+            }
+            
+            .col-services .row-item {
+                padding-left: 10px;
+                font-size: 10px;
+            }
+            
+            .btn-reserve-container {
+                margin-top: 30px;
+            }
+            
+            .btn-reserve-table {
+                padding: 10px 25px;
+                font-size: 14px;
+            }
+            
+            .footer {
+                padding: 30px 5%;
+            }
+            
+            .footer-col h4 {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .footer-list li {
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .contact-icon,
+            .icon-box {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .contact-icon svg,
+            .icon-box svg {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .social-icons {
+                gap: 10px;
+            }
+        }
+        
+        /* Très petits téléphones (max 360px) */
+        @media (max-width: 360px) {
+            .navbar {
+                padding: 8px;
+            }
+            
+            .nav-brand img {
+                height: 30px;
+            }
+            
+            .nav-links {
+                font-size: 11px;
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 6px 15px;
+                font-size: 11px;
+            }
+            
+            .hero h1 {
+                font-size: 22px;
+            }
+            
+            .hero p {
+                font-size: 13px;
+            }
+            
+            .btn-hero {
+                padding: 10px 25px;
+                font-size: 13px;
+            }
+            
+            .section-header h2 {
+                font-size: 20px;
+            }
+            
+            .timeline-card img {
+                height: 100px;
+            }
+            
+            .col {
+                min-width: 120px;
+            }
+            
+            .col-services {
+                min-width: 160px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -385,12 +859,27 @@
             <a href="/" class="nav-brand">
                 <img src="{{ asset('assets/logo.png') }}" alt="Lavagini">
             </a>
+            
+            <div class="burger-menu" id="burgerMenu" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
             <div class="nav-links">
                 <a href="#accueil">Accueil</a>
                 <a href="#services">Services</a>
                 <a href="#tarifs">Tarifs</a>
                 <a href="#contact">Contact</a>
             </div>
+            
+            <div class="nav-links mobile" id="mobileMenu">
+                <a href="#accueil" onclick="closeMobileMenu()">Accueil</a>
+                <a href="#services" onclick="closeMobileMenu()">Services</a>
+                <a href="#tarifs" onclick="closeMobileMenu()">Tarifs</a>
+                <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+            </div>
+            
             <div class="nav-buttons">
                 <a href="/login" class="btn btn-black">Connexion</a>
                 <a href="/register" class="btn btn-cyan">S'inscrire</a>
@@ -401,7 +890,7 @@
     <section class="hero" id="accueil">
         <h1>Votre véhicule lavé <br> <span>chez vous</span>, en un clic</h1>
         <p>LAVAGINI met à votre disposition des laveurs professionnels qui se déplacent chez vous. Réservez en quelques clics, nous faisons le reste.</p>
-        <a href="/register" class="btn-hero">Réserver maintenant</a>
+        <a href="/login" class="btn-hero">Réserver maintenant</a>
     </section>
 
     <section id="services">
@@ -540,7 +1029,7 @@
         </div>
 
         <div class="btn-reserve-container">
-            <a href="/register" class="btn-reserve-table">Réserver maintenant</a>
+            <a href="/login" class="btn-reserve-table">Réserver maintenant</a>
         </div>
     </section>
 
@@ -590,6 +1079,35 @@
             </ul>
         </div>
     </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const burgerMenu = document.getElementById('burgerMenu');
+            
+            mobileMenu.classList.toggle('active');
+            burgerMenu.classList.toggle('active');
+        }
+        
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const burgerMenu = document.getElementById('burgerMenu');
+            
+            mobileMenu.classList.remove('active');
+            burgerMenu.classList.remove('active');
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navbar = document.querySelector('.navbar');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const burgerMenu = document.getElementById('burgerMenu');
+            
+            if (!navbar.contains(event.target) && mobileMenu.classList.contains('active')) {
+                closeMobileMenu();
+            }
+        });
+    </script>
 
 </body>
 </html>

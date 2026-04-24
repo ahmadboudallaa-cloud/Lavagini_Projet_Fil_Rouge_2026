@@ -3,6 +3,85 @@
 @section('title', 'Dashboard Laveur')
 @section('page-title', 'Tableau de bord')
 
+@section('styles')
+<style>
+    /* Responsive Dashboard Laveur - Optimisé */
+    @media (max-width: 1024px) {
+        .text-4xl { font-size: 2rem !important; }
+        .text-2xl { font-size: 1.5rem !important; }
+        .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    
+    @media (max-width: 768px) {
+        /* Textes */
+        .text-4xl { font-size: 1.75rem !important; }
+        .text-3xl { font-size: 1.5rem !important; }
+        .text-2xl { font-size: 1.25rem !important; }
+        .text-xl { font-size: 1.125rem !important; }
+        
+        /* Grilles */
+        .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+        .grid-cols-2 { grid-template-columns: 1fr !important; }
+        
+        /* Espacements */
+        .mb-12 { margin-bottom: 2rem !important; }
+        .gap-6 { gap: 1rem !important; }
+        .p-10 { padding: 1.5rem !important; }
+        .p-6 { padding: 1.25rem !important; }
+        .rounded-\[40px\] { border-radius: 20px !important; }
+        
+        /* Tables */
+        table { font-size: 0.875rem !important; }
+        table th, table td { padding: 0.5rem !important; }
+        
+        /* Boutons actions */
+        .flex.justify-center.items-center.gap-2 {
+            flex-direction: column !important;
+            width: 100% !important;
+        }
+        
+        .flex.justify-center.items-center.gap-2 form,
+        .flex.justify-center.items-center.gap-2 a {
+            width: 100% !important;
+        }
+        
+        .flex.justify-center.items-center.gap-2 button,
+        .flex.justify-center.items-center.gap-2 a {
+            width: 100% !important;
+            text-align: center !important;
+            justify-content: center !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        /* Textes */
+        .text-4xl { font-size: 1.5rem !important; }
+        .text-3xl { font-size: 1.25rem !important; }
+        .text-2xl { font-size: 1.125rem !important; }
+        .text-xl { font-size: 1rem !important; }
+        .text-lg { font-size: 0.95rem !important; }
+        
+        /* Espacements */
+        .p-10 { padding: 1rem !important; }
+        .p-6 { padding: 0.875rem !important; }
+        
+        /* Grilles */
+        .grid-cols-4 { grid-template-columns: 1fr !important; }
+        
+        /* Tables scrollables */
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+    
+    @media (max-width: 480px) {
+        /* Textes */
+        .text-4xl { font-size: 1.25rem !important; }
+        .text-3xl { font-size: 1.125rem !important; }
+        .text-2xl { font-size: 1rem !important; }
+        .text-xl { font-size: 0.95rem !important; }
+    }
+</style>
+@endsection
+
 @section('content')
 <h2 class="text-4xl font-bold mb-10">
     Bienvenue, <span class="text-cyan-custom font-extrabold">{{ Auth::user()->name }}</span>

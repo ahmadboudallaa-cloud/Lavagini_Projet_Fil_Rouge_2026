@@ -198,18 +198,29 @@
     @media (max-width: 900px) {
         .split-container {
             flex-direction: column;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), url('{{ asset('assets/login1.jpg') }}') center/cover no-repeat fixed;
         }
 
         .left-half {
-            width: 100%;
-            height: 38vh;
-            border-bottom: none;
+            display: none;
         }
 
         .right-half {
             width: 100%;
-            min-height: 62vh;
-            padding: 4.5rem 1rem 2rem;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            background: transparent;
+        }
+        
+        .btn-accueil {
+            top: 15px;
+            background: rgba(46, 46, 46, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        
+        .login-card {
+            background: rgba(91, 91, 91, 0.95);
+            backdrop-filter: blur(10px);
         }
     }
 
@@ -217,6 +228,38 @@
         .login-card {
             max-width: 100%;
             padding: 1.35rem 1.2rem 1.25rem;
+            margin-top: 60px;
+        }
+        
+        .login-title {
+            font-size: 1.8rem;
+        }
+        
+        .logo-container img {
+            width: 65px;
+            height: 65px;
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .login-card {
+            padding: 1.2rem 1rem;
+            margin-top: 50px;
+        }
+        
+        .login-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group input {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .logo-container img {
+            width: 55px;
+            height: 55px;
         }
     }
 </style>
@@ -225,7 +268,7 @@
 @section('content')
 <div class="split-container">
     <div class="left-half">
-        <img src="{{ asset('assets/lavage6.jpg') }}" alt="Lavage professionnel">
+        <img src="{{ asset('assets/login1.jpg') }}" alt="Lavage professionnel">
     </div>
 
     <div class="right-half">
