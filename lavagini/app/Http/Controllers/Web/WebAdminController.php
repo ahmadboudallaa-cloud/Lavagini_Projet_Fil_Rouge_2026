@@ -45,7 +45,8 @@ class WebAdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'telephone' => 'nullable|string',
-            'adresse' => 'nullable|string'
+            'adresse' => 'nullable|string',
+            'password' => 'nullable|string|min:6'
         ]);
 
         $laveur->update([
@@ -103,7 +104,8 @@ class WebAdminController extends Controller
             'email' => 'required|email|unique:users,email,' . $id,
             'telephone' => 'nullable|string',
             'adresse' => 'nullable|string',
-            'type_client' => 'nullable|in:particulier,agence'
+            'type_client' => 'nullable|in:particulier,agence',
+            'password' => 'nullable|string|min:6'
         ]);
 
         $client->update([
@@ -113,6 +115,11 @@ class WebAdminController extends Controller
             'adresse' => $request->adresse,
             'type_client' => $request->type_client
         ]);
+
+        if ($request->password) {
+            $client->password = Hash::make($request->password);
+            $client->save();
+        }
 
         return redirect('/admin/dashboard')->with('success', 'Client modifié avec succès !');
     }

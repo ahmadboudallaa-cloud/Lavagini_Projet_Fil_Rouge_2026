@@ -10,33 +10,33 @@ class ZoneGeographiqueSeeder extends Seeder
     public function run(): void
     {
         ZoneGeographique::create([
-            'nom' => 'Paris Centre',
-            'ville' => 'Paris',
-            'code_postal' => '75001'
+            'nom' => 'Casablanca Centre',
+            'ville' => 'Casablanca',
+            'code_postal' => '20000'
         ]);
 
         ZoneGeographique::create([
-            'nom' => 'Paris Nord',
-            'ville' => 'Paris',
-            'code_postal' => '75018'
+            'nom' => 'Rabat Centre',
+            'ville' => 'Rabat',
+            'code_postal' => '10000'
         ]);
 
         ZoneGeographique::create([
-            'nom' => 'Lyon Centre',
-            'ville' => 'Lyon',
-            'code_postal' => '69001'
+            'nom' => 'Marrakech Centre',
+            'ville' => 'Marrakech',
+            'code_postal' => '40000'
         ]);
 
         ZoneGeographique::create([
-            'nom' => 'Marseille Centre',
-            'ville' => 'Marseille',
-            'code_postal' => '13001'
+            'nom' => 'Fes Centre',
+            'ville' => 'Fes',
+            'code_postal' => '30000'
         ]);
 
         ZoneGeographique::create([
-            'nom' => 'Toulouse Centre',
-            'ville' => 'Toulouse',
-            'code_postal' => '31000'
+            'nom' => 'Tanger Centre',
+            'ville' => 'Tanger',
+            'code_postal' => '90000'
         ]);
     }
 }

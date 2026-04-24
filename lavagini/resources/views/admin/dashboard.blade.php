@@ -13,6 +13,127 @@
     .form-group label { display: block; margin-bottom: 0.5rem; color: #ccc; font-weight: bold; }
     .form-group input, .form-group select { width: 100%; padding: 0.8rem; border: 1px solid #444; background: #333; color: white; border-radius: 8px; }
     .btn-full { width: 100%; padding: 1rem; background: #00C2FF; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
+    
+    /* Responsive Dashboard Admin - Optimisé */
+    @media (max-width: 1024px) {
+        .text-4xl { font-size: 2rem !important; }
+        .text-2xl { font-size: 1.5rem !important; }
+        .grid-cols-5 { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+    
+    @media (max-width: 768px) {
+        #dashboard-header { display: none !important; }
+        
+        /* Textes */
+        .text-4xl { font-size: 1.75rem !important; }
+        .text-3xl { font-size: 1.5rem !important; }
+        .text-2xl { font-size: 1.25rem !important; }
+        .text-xl { font-size: 1.125rem !important; }
+        
+        /* Grilles */
+        .grid-cols-5 { grid-template-columns: repeat(2, 1fr) !important; }
+        .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr !important; }
+        
+        /* Espacements */
+        .mb-10 { margin-bottom: 2rem !important; }
+        .gap-6, .gap-5 { gap: 1rem !important; }
+        .p-8 { padding: 1.5rem !important; }
+        .p-6 { padding: 1.25rem !important; }
+        .rounded-\[30px\] { border-radius: 20px !important; }
+        
+        /* Tables */
+        table { font-size: 0.875rem !important; }
+        table th, table td { padding: 0.5rem !important; }
+        
+        /* Missions responsive */
+        #missions .flex.justify-between {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+        
+        #missions .flex.items-center.space-x-6 {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        
+        #missions .grid {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Paramètres responsive */
+        #parametres .flex.items-center.space-x-6 {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 1rem !important;
+        }
+        
+        #parametres .grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        
+        #parametres .flex.justify-end {
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 0.75rem !important;
+        }
+        
+        #parametres .flex.justify-end button {
+            width: 100% !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        /* Textes */
+        .text-4xl { font-size: 1.5rem !important; }
+        .text-3xl { font-size: 1.25rem !important; }
+        .text-2xl { font-size: 1.125rem !important; }
+        .text-xl { font-size: 1rem !important; }
+        .text-lg { font-size: 0.95rem !important; }
+        
+        /* Espacements */
+        .p-8 { padding: 1rem !important; }
+        .p-6 { padding: 0.875rem !important; }
+        .grid-cols-5 { grid-template-columns: 1fr !important; }
+        
+        /* Tables scrollables */
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        
+        /* Modale */
+        .modal-content { padding: 1.5rem; margin: 0 1rem; max-width: calc(100% - 2rem); }
+        
+        /* Boutons */
+        .flex.justify-between,
+        .flex.justify-center,
+        .flex.space-x-2,
+        .flex.space-x-3 {
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 0.5rem !important;
+        }
+        
+        .flex.space-x-2 button,
+        .flex.space-x-2 a,
+        .flex.space-x-2 form,
+        .flex.space-x-3 button,
+        .flex.space-x-3 a {
+            width: 100% !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Textes */
+        .text-4xl { font-size: 1.25rem !important; }
+        .text-3xl { font-size: 1.125rem !important; }
+        .text-2xl { font-size: 1rem !important; }
+        .text-xl { font-size: 0.95rem !important; }
+        
+        /* Profil */
+        #parametres .w-24 { width: 5rem !important; height: 5rem !important; }
+        #parametres .w-16 { width: 3.5rem !important; height: 3.5rem !important; }
+    }
 </style>
 @endsection
 
@@ -100,31 +221,74 @@
 
 <div id="missions" class="tab-content">
     <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
-        <h3 class="text-cyan-custom text-xl font-bold mb-8">Gestion des missions</h3>
-        <table class="w-full text-left">
-            <thead>
-                <tr class="text-white text-lg border-b border-gray-700">
-                    <th class="pb-4 font-semibold">ID</th>
-                    <th class="pb-4 font-semibold">Commande</th>
-                    <th class="pb-4 font-semibold">Laveur</th>
-                    <th class="pb-4 font-semibold">Statut</th>
-                    <th class="pb-4 font-semibold">Date</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-200">
-                @forelse($missions ?? [] as $mission)
-                <tr class="hover:bg-dark-hover">
-                    <td class="py-4">#M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</td>
-                    <td class="py-4">#{{ str_pad($mission->commande_id, 3, '0', STR_PAD_LEFT) }}</td>
-                    <td class="py-4">{{ $mission->laveur->name }}</td>
-                    <td class="py-4"><span class="bg-cyan-custom text-black px-3 py-1 rounded-full text-xs font-bold">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span></td>
-                    <td class="py-4">{{ $mission->created_at->format('d/m/Y') }}</td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="text-center py-6 text-gray-500">Aucune mission</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+        <h3 class="text-cyan-custom text-2xl font-bold mb-8">Gestion des missions</h3>
+        
+        <div class="space-y-4">
+            @forelse($missions ?? [] as $mission)
+            <div class="bg-dark-hover border-2 border-gray-700 rounded-2xl p-6 hover:border-cyan-custom transition duration-300">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-6 flex-1">
+                        <div class="bg-cyan-custom/20 p-4 rounded-xl">
+                            <svg class="w-8 h-8 text-cyan-custom" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-4 mb-3">
+                                <h3 class="text-white text-xl font-bold">#M{{ str_pad($mission->id, 3, '0', STR_PAD_LEFT) }}</h3>
+                                @if($mission->statut === 'assignee')
+                                    <span class="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-bold">Assignée</span>
+                                @elseif($mission->statut === 'en_cours')
+                                    <span class="bg-yellow-500 text-black px-4 py-1.5 rounded-full text-sm font-bold">En cours</span>
+                                @elseif($mission->statut === 'terminee')
+                                    <span class="bg-cyan-custom text-black px-4 py-1.5 rounded-full text-sm font-bold">Terminée</span>
+                                @else
+                                    <span class="bg-gray-500 text-white px-4 py-1.5 rounded-full text-sm font-bold">{{ ucfirst(str_replace('_', ' ', $mission->statut)) }}</span>
+                                @endif
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <p class="text-gray-400 text-xs mb-1">Commande</p>
+                                    <p class="text-white font-medium">#{{ str_pad($mission->commande_id, 3, '0', STR_PAD_LEFT) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-xs mb-1">Laveur</p>
+                                    <p class="text-white font-medium">{{ $mission->laveur->name }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-xs mb-1">Date</p>
+                                    <p class="text-white font-medium">{{ $mission->created_at->format('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <a href="/admin/missions/{{ $mission->id }}" class="bg-white text-black px-6 py-2.5 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
+                            <span>Détails</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-16">
+                <div class="bg-dark-hover rounded-2xl p-12 inline-block">
+                    <div class="text-gray-600 mb-6">
+                        <svg class="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white text-2xl font-bold mb-3">Aucune mission</h3>
+                    <p class="text-gray-400 text-lg">Aucune mission n'a été créée pour le moment</p>
+                </div>
+            </div>
+            @endforelse
+        </div>
     </div>
 </div>
 
@@ -384,6 +548,7 @@
             <div class="form-group"><label>Nom complet</label><input type="text" name="name" id="client_name" required></div>
             <div class="form-group"><label>Email</label><input type="email" name="email" id="client_email" required></div>
             <div class="form-group"><label>Téléphone</label><input type="text" name="telephone" id="client_telephone"></div>
+            <div class="form-group"><label>Nouveau mot de passe (optionnel)</label><input type="password" name="password" minlength="6" placeholder="Laisser vide pour ne pas changer"></div>
             <button type="submit" class="btn-full">Modifier le client</button>
         </form>
     </div>
@@ -399,7 +564,31 @@
             @csrf @method('PUT')
             <div class="form-group"><label>Nom complet</label><input type="text" name="name" id="laveur_name" required></div>
             <div class="form-group"><label>Email</label><input type="email" name="email" id="laveur_email" required></div>
+            <div class="form-group"><label>Nouveau mot de passe (optionnel)</label><input type="password" name="password" minlength="6" placeholder="Laisser vide pour ne pas changer"></div>
             <button type="submit" class="btn-full">Modifier le laveur</button>
+        </form>
+    </div>
+</div>
+
+<div id="assignerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-cyan-custom font-bold text-xl">Assigner une mission</h2>
+            <span class="close" onclick="closeAssignerModal()">&times;</span>
+        </div>
+        <form action="/admin/missions/assigner" method="POST">
+            @csrf
+            <input type="hidden" name="commande_id" id="assigner_commande_id">
+            <div class="form-group">
+                <label>Sélectionner un laveur</label>
+                <select name="laveur_id" required>
+                    <option value="">-- Choisir un laveur --</option>
+                    @foreach($laveurs ?? [] as $laveur)
+                        <option value="{{ $laveur->id }}">{{ $laveur->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="btn-full">Assigner la mission</button>
         </form>
     </div>
 </div>
@@ -414,6 +603,12 @@
     function closeZoneModal() { document.getElementById('zoneModal').style.display = 'none'; }
     function openClientModal() { document.getElementById('clientModal').style.display = 'block'; }
     function closeClientModal() { document.getElementById('clientModal').style.display = 'none'; }
+    
+    function openAssignerModal(commandeId) {
+        document.getElementById('assigner_commande_id').value = commandeId;
+        document.getElementById('assignerModal').style.display = 'block';
+    }
+    function closeAssignerModal() { document.getElementById('assignerModal').style.display = 'none'; }
     
     function openModifierZoneModal(id, nom, ville, code_postal) {
         document.getElementById('zone_nom').value = nom;
@@ -457,29 +652,6 @@
             reader.readAsDataURL(file);
         }
     }
-    
-    // Fonction pour gérer l'affichage du header selon l'onglet
-    function toggleDashboardHeader(tabName) {
-        const header = document.getElementById('dashboard-header');
-        if (tabName === 'parametres') {
-            header.style.display = 'none';
-        } else {
-            header.style.display = 'block';
-        }
-    }
-    
-    // Modifier la fonction showTab existante dans admin.blade.php
-    const originalShowTab = window.showTab;
-    window.showTab = function(tabName, element) {
-        toggleDashboardHeader(tabName);
-        if (originalShowTab) originalShowTab(tabName, element);
-    };
-    
-    // Au chargement de la page
-    window.addEventListener('DOMContentLoaded', () => {
-        const activeTab = localStorage.getItem('activeTab') || 'commandes';
-        toggleDashboardHeader(activeTab);
-    });
     
     window.onclick = function(event) {
         if (event.target.classList.contains('modal')) {

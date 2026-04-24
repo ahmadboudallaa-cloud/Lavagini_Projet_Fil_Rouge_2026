@@ -38,26 +38,9 @@ class WebMissionController extends Controller
         return redirect('/laveur/dashboard')->with('success', 'Mission démarrée avec succès !');
     }
 
-    // Afficher le formulaire pour terminer une mission
-    public function showTerminer($id)
-    {
-        $mission = Mission::with(['commande.client', 'commande.zone'])->findOrFail($id);
-        
-        if ($mission->laveur_id != Auth::id()) {
-            abort(403);
-        }
-
-        return view('laveur.terminer-mission', compact('mission'));
-    }
-
     // Terminer une mission
     public function terminer(Request $request, $id)
     {
-        $request->validate([
-            'temps_passe' => 'required|integer|min:1',
-            'commentaire' => 'nullable|string'
-        ]);
-
         $mission = Mission::findOrFail($id);
         
         if ($mission->laveur_id != Auth::id()) {
@@ -66,8 +49,6 @@ class WebMissionController extends Controller
 
         $mission->statut = 'terminee';
         $mission->date_fin = now();
-        $mission->temps_passe = $request->temps_passe;
-        $mission->commentaire = $request->commentaire;
         $mission->save();
 
         // Mettre à jour le statut de la commande

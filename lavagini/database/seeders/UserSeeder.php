@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'admin',
             'telephone' => '0612345678',
-            'adresse' => '123 Rue Admin, Paris'
+            'adresse' => '123 Boulevard Zerktouni, Casablanca'
         ]);
 
         // Créer des laveurs
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'laveur',
             'telephone' => '0623456789',
-            'adresse' => '45 Avenue des Laveurs, Paris'
+            'adresse' => '45 Avenue Hassan II, Rabat'
         ]);
 
         User::create([
@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'laveur',
             'telephone' => '0634567890',
-            'adresse' => '78 Rue du Lavage, Lyon'
+            'adresse' => '78 Avenue Mohammed VI, Marrakech'
         ]);
 
         // Créer des clients
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'client',
             'telephone' => '0645678901',
-            'adresse' => '12 Rue des Clients, Paris',
+            'adresse' => '12 Rue Allal Ben Abdellah, Fes',
             'type_client' => 'particulier'
         ]);
 
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'client',
             'telephone' => '0656789012',
-            'adresse' => '34 Boulevard Client, Marseille',
+            'adresse' => '34 Boulevard Pasteur, Tanger',
             'type_client' => 'particulier'
         ]);
 
@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'client',
             'telephone' => '0667890123',
-            'adresse' => '56 Avenue des Agences, Lyon',
+            'adresse' => '56 Avenue Moulay Youssef, Casablanca',
             'type_client' => 'agence'
         ]);
     }

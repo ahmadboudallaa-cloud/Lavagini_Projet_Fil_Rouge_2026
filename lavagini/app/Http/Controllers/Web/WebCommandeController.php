@@ -39,13 +39,24 @@ class WebCommandeController extends Controller
             'description' => $request->description
         ]);
 
-        // Créer une notification
+        // Créer une notification pour le client
         Notification::create([
             'user_id' => Auth::id(),
             'titre' => 'Commande créée',
             'message' => 'Votre demande de service a été enregistrée avec succès. Montant: ' . $montant . '€',
             'type' => 'commande'
         ]);
+
+        // Créer une notification pour l'admin
+        $admin = \App\Models\User::where('role', 'admin')->first();
+        if ($admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'titre' => 'Nouvelle commande',
+                'message' => 'Une nouvelle commande a été créée par ' . Auth::user()->name . '. Montant: ' . $montant . '€',
+                'type' => 'commande'
+            ]);
+        }
 
         // Si paiement en ligne, rediriger vers Stripe
         if ($request->mode_paiement === 'en_ligne') {
@@ -91,6 +102,20 @@ class WebCommandeController extends Controller
         }
 
         return view('client.commande-detail', compact('commande'));
+    }
+
+    // Afficher la page d'évaluation
+    public function showEvaluation($id)
+    {
+        $commande = Commande::with(['client', 'zone', 'mission.laveur', 'paiement', 'facture', 'evaluation'])
+            ->findOrFail($id);
+
+        // Vérifier que l'utilisateur a le droit d'accéder à cette commande
+        if (Auth::user()->role === 'client' && $commande->client_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('client.evaluation', compact('commande'));
     }
 
     // Créer une évaluation
