@@ -23,9 +23,64 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         body { background-color: #000000; color: #ffffff; }
+        
+        /* Burger Menu */
+        .burger-btn {
+            display: none;
+            z-index: 100;
+            background: #333;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .burger-btn span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            background: #00C2FF;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .burger-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+        
+        .burger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .burger-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        aside {
+            transition: transform 0.3s ease;
+        }
         
         /* Dropdowns et Notifications */
         .notification-dropdown, .user-dropdown {
@@ -58,12 +113,153 @@
         /* Gestion des onglets */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            aside {
+                width: 220px;
+            }
+            
+            main {
+                margin-left: 220px !important;
+            }
+            
+            aside nav a {
+                font-size: 1rem;
+                padding-left: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .burger-btn {
+                display: flex !important;
+            }
+            
+            aside {
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 280px !important;
+                height: 100vh !important;
+                transform: translateX(-100%) !important;
+                z-index: 9999 !important;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.5) !important;
+            }
+            
+            aside.active {
+                transform: translateX(0) !important;
+            }
+            
+            main {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            header {
+                padding: 1rem !important;
+                padding-left: 1rem !important;
+            }
+            
+            header h3 {
+                font-size: 0.95rem !important;
+            }
+            
+            header .user-menu span {
+                display: none !important;
+            }
+            
+            .px-10 {
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+            }
+            
+            .notification-dropdown {
+                width: 280px !important;
+                right: 0 !important;
+            }
+            
+            aside nav a {
+                font-size: 1.1rem !important;
+                padding-left: 2rem !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            header {
+                padding: 0.75rem !important;
+                padding-left: 0.75rem !important;
+            }
+            
+            header h3 {
+                font-size: 0.85rem !important;
+            }
+            
+            header .flex.items-center {
+                gap: 0.5rem !important;
+            }
+            
+            header .w-7 {
+                width: 1.5rem !important;
+                height: 1.5rem !important;
+            }
+            
+            header .w-9 {
+                width: 2rem !important;
+                height: 2rem !important;
+            }
+            
+            .px-10 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .py-8 {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            
+            .notification-dropdown {
+                width: 250px !important;
+                right: -20px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .burger-btn {
+                top: 15px !important;
+                left: 15px !important;
+                width: 40px !important;
+                height: 40px !important;
+            }
+            
+            aside {
+                width: 260px !important;
+            }
+            
+            header {
+                padding: 0.5rem !important;
+                padding-left: 0.5rem !important;
+                flex-wrap: wrap !important;
+            }
+            
+            header h3 {
+                font-size: 0.8rem !important;
+            }
+            
+            .notification-dropdown {
+                width: calc(100vw - 40px) !important;
+                right: -100px !important;
+            }
+        }
     </style>
     @yield('styles')
 </head>
 <body class="flex min-h-screen font-sans overflow-x-hidden">
 
-    <aside class="w-[280px] bg-dark-card fixed h-full z-50 flex flex-col py-6">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <aside class="w-[280px] bg-dark-card fixed h-full z-50 flex flex-col py-6" id="sidebar">
         <div class="flex flex-col items-center mb-8 mt-4">
             <div class="w-32 h-32 mb-3 flex items-center justify-center">
                 <img src="{{ asset('assets/logo.png') }}" alt="Logo Lavagini" class="w-full h-full object-contain">
@@ -72,17 +268,28 @@
         </div>
 
         <nav class="flex flex-col w-full pr-4 space-y-2">
-            <a href="#" onclick="event.preventDefault(); showTab('dashboard', this);" class="menu-item active py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Dashboard</a>
+            <a href="/client/dashboard" class="menu-item {{ request()->is('client/dashboard') && !session('activeTab') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Dashboard</a>
             <a href="#" onclick="event.preventDefault(); showTab('commandes', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Commandes</a>
             <a href="#" onclick="event.preventDefault(); showTab('factures', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Factures</a>
+            <a href="/chat" class="menu-item {{ request()->is('chat*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">
+                <i class="fas fa-comments"></i> Messagerie
+            </a>
             <a href="#" onclick="event.preventDefault(); showTab('profil', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4">Mon Profil</a>
         </nav>
     </aside>
 
     <main class="flex-1 ml-[280px] bg-dark-bg min-h-screen flex flex-col">
         
-        <header class="flex justify-between items-center px-8 py-4 bg-[#2b2b2b]">
-            <h3 class="text-gray-300 text-xl font-normal tracking-wide">@yield('page-title', 'Dashboard Client')</h3>
+        <header class="flex justify-between items-center px-8 py-4 bg-[#2b2b2b] sticky top-0 z-40">
+            <!-- Burger Button intégré dans le header -->
+            <div class="flex items-center space-x-4">
+                <button class="burger-btn" id="burgerBtn" onclick="toggleSidebar()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h3 class="text-gray-300 text-xl font-normal tracking-wide">@yield('page-title', 'Dashboard Client')</h3>
+            </div>
             
             <div class="flex items-center space-x-6">
                 <div class="relative cursor-pointer notification-icon flex items-center" onclick="toggleNotifications(event)">
@@ -140,7 +347,7 @@
             </div>
         </header>
 
-        <div class="px-10 py-8">
+        <div class="px-10 py-8" style="{{ request()->is('chat*') ? 'padding: 20px 40px !important;' : '' }}">
             @if(session('success'))
                 <div class="bg-cyan-custom/20 border border-cyan-custom text-cyan-custom px-4 py-3 rounded-xl mb-6 font-medium">✅ {{ session('success') }}</div>
             @endif
@@ -153,6 +360,44 @@
     </main>
 
     <script>
+        // Burger Menu Functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const burgerBtn = document.getElementById('burgerBtn');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            burgerBtn.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const burgerBtn = document.getElementById('burgerBtn');
+            
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            burgerBtn.classList.remove('active');
+        }
+        
+        // Close sidebar when clicking on menu item on mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Si c'est un lien externe (comme Messagerie), nettoyer le localStorage
+                    if (this.getAttribute('href') && !this.getAttribute('href').startsWith('#')) {
+                        localStorage.removeItem('activeTab');
+                    }
+                    
+                    if (window.innerWidth <= 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+        });
+        
         function toggleUserMenu() { document.getElementById('userDropdown').classList.toggle('show'); }
         function toggleNotifications(event) {
             event.stopPropagation();
@@ -182,54 +427,61 @@
         
         // Gestion des onglets
         function showTab(tabName, element) {
+            // Nettoyer localStorage pour indiquer qu'on est dans un onglet
+            localStorage.setItem('activeTab', tabName);
+            
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(el => {
+                el.classList.remove('active');
+            });
             
             if(element) element.classList.add('active');
             
             // Afficher/cacher le dashboard principal
             const dashboardMain = document.getElementById('dashboard-main');
             if (dashboardMain) {
-                if (tabName === 'dashboard') {
-                    dashboardMain.style.display = 'block';
-                } else {
-                    dashboardMain.style.display = 'none';
-                    const tabContent = document.getElementById(tabName);
-                    if (tabContent) {
-                        tabContent.classList.add('active');
-                    }
+                dashboardMain.style.display = 'none';
+                const tabContent = document.getElementById(tabName);
+                if (tabContent) {
+                    tabContent.classList.add('active');
                 }
             }
-            
-            // Sauvegarder l'onglet actif
-            localStorage.setItem('activeTab', tabName);
         }
         
         // Au chargement de la page
         window.addEventListener('DOMContentLoaded', () => {
-            const activeTab = localStorage.getItem('activeTab') || 'dashboard';
-            
-            // Réinitialiser localStorage si on arrive sur /client/dashboard
-            if (window.location.pathname === '/client/dashboard' && !localStorage.getItem('activeTab')) {
-                localStorage.setItem('activeTab', 'dashboard');
+            // Si on est sur la page chat, ne rien faire
+            if (window.location.pathname.includes('/chat')) {
+                // Nettoyer le localStorage pour éviter les conflits
+                localStorage.removeItem('activeTab');
+                return;
             }
             
-            // Mettre à jour le menu
-            document.querySelectorAll('.menu-item').forEach(el => {
-                el.classList.remove('active');
-                const onclick = el.getAttribute('onclick');
-                if(onclick && onclick.includes("'" + activeTab + "'")) {
-                    el.classList.add('active');
-                }
-            });
-            
-            // Afficher le bon contenu
-            const dashboardMain = document.getElementById('dashboard-main');
-            if (dashboardMain) {
-                if (activeTab === 'dashboard') {
-                    dashboardMain.style.display = 'block';
+            // Si on est sur le dashboard client
+            if (window.location.pathname === '/client/dashboard') {
+                const activeTab = localStorage.getItem('activeTab');
+                
+                // Si pas d'onglet actif, afficher le dashboard principal
+                if (!activeTab) {
+                    const dashboardMain = document.getElementById('dashboard-main');
+                    if (dashboardMain) {
+                        dashboardMain.style.display = 'block';
+                    }
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                } else {
+                    return;
+                }
+                
+                // Sinon, restaurer l'onglet actif
+                document.querySelectorAll('.menu-item').forEach(el => {
+                    el.classList.remove('active');
+                    const onclick = el.getAttribute('onclick');
+                    if(onclick && onclick.includes("'" + activeTab + "'")) {
+                        el.classList.add('active');
+                    }
+                });
+                
+                const dashboardMain = document.getElementById('dashboard-main');
+                if (dashboardMain) {
                     dashboardMain.style.display = 'none';
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
                     const tabContent = document.getElementById(activeTab);

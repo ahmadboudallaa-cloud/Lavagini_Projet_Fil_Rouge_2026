@@ -23,6 +23,7 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         body { background-color: #000000; color: #ffffff; }
@@ -54,12 +55,187 @@
             border-bottom-right-radius: 1rem;
             font-weight: 600;
         }
+        
+        /* Burger Menu */
+        .burger-btn {
+            display: none;
+            z-index: 100;
+            background: #333;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .burger-btn span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            background: #00C2FF;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .burger-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+        
+        .burger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .burger-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        aside {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            aside {
+                width: 220px !important;
+            }
+            
+            main {
+                margin-left: 220px !important;
+            }
+            
+            aside nav a {
+                font-size: 1rem !important;
+                padding-left: 1.5rem !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .burger-btn {
+                display: flex !important;
+            }
+            
+            aside {
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 280px !important;
+                height: 100vh !important;
+                transform: translateX(-100%) !important;
+                z-index: 9999 !important;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.5) !important;
+            }
+            
+            aside.active {
+                transform: translateX(0) !important;
+            }
+            
+            main {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            header {
+                padding: 1rem !important;
+                padding-left: 1rem !important;
+            }
+            
+            header h3 {
+                font-size: 0.95rem !important;
+            }
+            
+            header .user-menu span {
+                display: none !important;
+            }
+            
+            .px-10 {
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+            }
+            
+            .notification-dropdown {
+                width: 280px !important;
+                right: 0 !important;
+            }
+            
+            aside nav a {
+                font-size: 1.1rem !important;
+                padding-left: 2rem !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            header {
+                padding: 0.75rem !important;
+                padding-left: 0.75rem !important;
+            }
+            
+            header h3 {
+                font-size: 0.85rem !important;
+            }
+            
+            .px-10 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .notification-dropdown {
+                width: 250px !important;
+                right: -20px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .burger-btn {
+                top: 15px !important;
+                left: 15px !important;
+                width: 40px !important;
+                height: 40px !important;
+            }
+            
+            aside {
+                width: 260px !important;
+            }
+            
+            header {
+                padding: 0.5rem !important;
+                padding-left: 0.5rem !important;
+            }
+            
+            header h3 {
+                font-size: 0.8rem !important;
+            }
+            
+            .notification-dropdown {
+                width: calc(100vw - 40px) !important;
+                right: -100px !important;
+            }
+        }
     </style>
     @yield('styles')
 </head>
 <body class="flex min-h-screen font-sans overflow-x-hidden">
 
-    <aside class="w-[280px] bg-dark-card fixed h-full z-50 flex flex-col py-6">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <aside class="w-[280px] bg-dark-card fixed h-full z-50 flex flex-col py-6" id="sidebar">
         <div class="flex flex-col items-center mb-8 mt-4">
             <div class="w-32 h-32 mb-3 flex items-center justify-center">
                 <img src="{{ asset('assets/logo.png') }}" alt="Logo Lavagini" class="w-full h-full object-contain">
@@ -68,13 +244,23 @@
 
         <nav class="flex flex-col w-full pr-4 space-y-2">
             <a href="/laveur/dashboard" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition {{ request()->is('laveur/dashboard') ? 'active' : '' }}">Mission</a>
+            <a href="/chat" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition {{ request()->is('chat*') ? 'active' : '' }}">
+                <i class="fas fa-comments"></i> Messagerie
+            </a>
             <a href="/profil" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4 {{ request()->is('profil') ? 'active' : '' }}">Mon Profil</a>
         </nav>
     </aside>
 
     <main class="flex-1 ml-[280px] bg-dark-bg min-h-screen flex flex-col">
-        <header class="flex justify-between items-center px-8 py-4 bg-[#2b2b2b]">
-            <h3 class="text-gray-300 text-xl font-normal tracking-wide">@yield('page-title', 'Dashboard Laveur')</h3>
+        <header class="flex justify-between items-center px-8 py-4 bg-[#2b2b2b] sticky top-0 z-40">
+            <div class="flex items-center space-x-4">
+                <button class="burger-btn" id="burgerBtn" onclick="toggleSidebar()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h3 class="text-gray-300 text-xl font-normal tracking-wide">@yield('page-title', 'Dashboard Laveur')</h3>
+            </div>
 
             <div class="flex items-center space-x-6">
                 <div class="relative cursor-pointer notification-icon flex items-center" onclick="toggleNotifications(event)">
@@ -134,7 +320,7 @@
             </div>
         </header>
 
-        <div class="px-10 py-8">
+        <div class="px-10 py-8" style="{{ request()->is('chat*') ? 'padding: 20px 40px !important;' : '' }}">
             @if(session('success'))
                 <div class="bg-cyan-custom/20 border border-cyan-custom text-cyan-custom px-4 py-3 rounded-xl mb-6 font-medium">✅ {{ session('success') }}</div>
             @endif
@@ -147,6 +333,39 @@
     </main>
 
     <script>
+        // Burger Menu Functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const burgerBtn = document.getElementById('burgerBtn');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            burgerBtn.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const burgerBtn = document.getElementById('burgerBtn');
+            
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            burgerBtn.classList.remove('active');
+        }
+        
+        // Close sidebar when clicking on menu item on mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+        });
+        
         function toggleUserMenu() { document.getElementById('userDropdown').classList.toggle('show'); }
         function toggleNotifications(event) {
             event.stopPropagation();

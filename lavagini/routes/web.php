@@ -56,6 +56,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/profil', [\App\Http\Controllers\Web\ProfilController::class, 'update']);
     Route::delete('/profil/photo/supprimer', [\App\Http\Controllers\Web\ProfilController::class, 'supprimerPhoto']);
     
+    // Routes pour le chat
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{id}', [\App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{id}/message', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/{id}/messages', [\App\Http\Controllers\ChatController::class, 'getNewMessages'])->name('chat.messages');
+    Route::post('/chat/create', [\App\Http\Controllers\ChatController::class, 'getOrCreateConversation'])->name('chat.create');
+    Route::get('/chat-users', [\App\Http\Controllers\ChatController::class, 'availableUsers'])->name('chat.users');
+    
     // Routes pour les paiements
     Route::get('/paiement/stripe/{commandeId}', [\App\Http\Controllers\Web\PaiementController::class, 'creerSessionPaiement']);
     Route::post('/paiement/stripe/{commandeId}', [\App\Http\Controllers\Web\PaiementController::class, 'creerSessionPaiement']);
@@ -68,6 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/client/dashboard', [WebDashboardController::class, 'clientDashboard']);
         Route::post('/commandes', [WebCommandeController::class, 'store']);
         Route::get('/client/commandes', [WebCommandeController::class, 'mesCommandes']);
+        Route::get('/client/commandes/{id}/evaluation', [WebCommandeController::class, 'showEvaluation']);
         Route::get('/client/commandes/{id}', [WebCommandeController::class, 'show']);
         Route::post('/client/evaluations/{commandeId}', [WebCommandeController::class, 'creerEvaluation']);
         Route::get('/client/factures', [WebCommandeController::class, 'mesFactures']);
@@ -77,7 +86,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:laveur')->group(function () {
         Route::get('/laveur/dashboard', [WebDashboardController::class, 'laveurDashboard']);
         Route::post('/laveur/missions/{id}/demarrer', [WebMissionController::class, 'demarrer']);
-        Route::get('/laveur/missions/{id}/terminer', [WebMissionController::class, 'showTerminer']);
         Route::post('/laveur/missions/{id}/terminer', [WebMissionController::class, 'terminer']);
         Route::get('/laveur/missions/{id}', [WebMissionController::class, 'show']);
     });
@@ -88,16 +96,16 @@ Route::middleware('auth')->group(function () {
         
         // CRUD Laveurs
         Route::post('/admin/laveurs', [WebAdminController::class, 'creerLaveur']);
-        Route::post('/admin/laveurs/{id}', [WebAdminController::class, 'modifierLaveur']);
+        Route::put('/admin/laveurs/{id}', [WebAdminController::class, 'modifierLaveur']);
         Route::delete('/admin/laveurs/{id}', [WebAdminController::class, 'supprimerLaveur']);
         
         // CRUD Clients
-        Route::post('/admin/clients/{id}', [WebAdminController::class, 'modifierClient']);
+        Route::put('/admin/clients/{id}', [WebAdminController::class, 'modifierClient']);
         Route::delete('/admin/clients/{id}', [WebAdminController::class, 'supprimerClient']);
         
         // CRUD Zones
         Route::post('/admin/zones', [WebAdminController::class, 'creerZone']);
-        Route::post('/admin/zones/{id}', [WebAdminController::class, 'modifierZone']);
+        Route::put('/admin/zones/{id}', [WebAdminController::class, 'modifierZone']);
         Route::delete('/admin/zones/{id}', [WebAdminController::class, 'supprimerZone']);
         
         // Gestion des commandes

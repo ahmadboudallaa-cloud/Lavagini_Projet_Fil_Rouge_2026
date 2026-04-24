@@ -53,6 +53,22 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
+    // Relations pour le chat
+    public function conversationsAsUser1()
+    {
+        return $this->hasMany(Conversation::class, 'user1_id');
+    }
+
+    public function conversationsAsUser2()
+    {
+        return $this->hasMany(Conversation::class, 'user2_id');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
     // Méthodes utiles
     public function isClient()
     {
