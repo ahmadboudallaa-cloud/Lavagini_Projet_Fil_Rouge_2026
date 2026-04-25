@@ -4,140 +4,193 @@
     <meta charset="utf-8">
     <title>Facture {{ $facture->numero_facture }}</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            color: #ffffff;
-            background-color: #000000;
-            margin: 0;
-            padding: 20px;
+        * {
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 24px;
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
-            background-color: #1a1a1a;
+            background-color: #ffffff;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 194, 255, 0.2);
+            border: 2px solid #000000;
         }
+
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 3px solid #00C2FF;
-            padding-bottom: 30px;
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 3px solid #000000;
         }
+
         .header h1 {
-            color: #00C2FF;
+            color: #000000;
             margin: 0;
-            font-size: 48px;
-            font-weight: bold;
+            font-size: 44px;
+            font-weight: 800;
             letter-spacing: 2px;
         }
+
         .header p {
-            color: #cccccc;
-            margin: 10px 0;
+            color: #333333;
+            margin: 8px 0;
             font-size: 14px;
         }
+
         .header h2 {
-            color: #ffffff;
-            margin: 20px 0 10px 0;
-            font-size: 24px;
-        }
-        .header .numero {
-            color: #00C2FF;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .info-section {
-            margin: 30px 0;
-            background-color: #2b2b2b;
-            border-radius: 12px;
-            padding: 20px;
-            border-left: 4px solid #00C2FF;
-        }
-        .info-section h3 {
-            background: linear-gradient(135deg, #00C2FF 0%, #0099cc 100%);
             color: #000000;
-            padding: 12px 20px;
-            margin: -20px -20px 20px -20px;
-            border-radius: 8px 8px 0 0;
-            font-weight: bold;
-            font-size: 16px;
+            margin: 18px 0 8px 0;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
+
+        .header .numero {
+            color: #000000;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .info-section {
+            margin: 24px 0;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            padding: 18px;
+        }
+
+        .info-section h3 {
+            background: #000000;
+            color: #ffffff;
+            padding: 12px 16px;
+            margin: -18px -18px 18px -18px;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.04em;
+        }
+
         .info-row {
             padding: 10px 0;
-            border-bottom: 1px solid #333333;
+            border-bottom: 1px solid #dddddd;
             display: flex;
             justify-content: space-between;
+            gap: 16px;
         }
+
         .info-row:last-child {
             border-bottom: none;
         }
+
         .info-row strong {
-            color: #00C2FF;
-            font-weight: 600;
+            color: #000000;
+            font-weight: 700;
+            flex-shrink: 0;
         }
+
         .info-row span {
-            color: #ffffff;
+            color: #222222;
+            text-align: right;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 30px 0;
-            background-color: #2b2b2b;
-            border-radius: 12px;
-            overflow: hidden;
+            margin: 28px 0;
+            border: 1px solid #000000;
+            background-color: #ffffff;
         }
+
         table th {
-            background: linear-gradient(135deg, #00C2FF 0%, #0099cc 100%);
-            color: #000000;
-            padding: 15px;
-            text-align: left;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        table td {
-            padding: 15px;
-            border-bottom: 1px solid #333333;
+            background: #000000;
             color: #ffffff;
+            padding: 14px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+            border-right: 1px solid #ffffff;
         }
-        table tr:last-child td {
-            border-bottom: none;
+
+        table th:last-child {
+            border-right: none;
         }
+
+        table td {
+            padding: 14px;
+            border-top: 1px solid #dddddd;
+            color: #000000;
+        }
+
+        table tr:nth-child(even) td {
+            background-color: #f5f5f5;
+        }
+
         .total-section {
-            background-color: #2b2b2b;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 30px;
-            border: 2px solid #00C2FF;
+            background-color: #f5f5f5;
+            border: 2px solid #000000;
+            padding: 22px;
+            margin-top: 28px;
         }
-        .total {
-            text-align: right;
-            font-size: 32px;
-            font-weight: bold;
-            color: #00C2FF;
-            margin: 0;
-        }
+
         .total-label {
             text-align: right;
-            color: #cccccc;
+            color: #000000;
             font-size: 14px;
-            margin-bottom: 10px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.04em;
         }
+
+        .total {
+            text-align: right;
+            font-size: 30px;
+            font-weight: 800;
+            color: #000000;
+            margin: 0;
+        }
+
         .footer {
-            margin-top: 50px;
+            margin-top: 44px;
             text-align: center;
             font-size: 12px;
-            color: #666666;
-            border-top: 1px solid #333333;
-            padding-top: 30px;
+            color: #444444;
+            border-top: 1px solid #000000;
+            padding-top: 24px;
         }
+
         .footer p {
             margin: 5px 0;
         }
+
         .footer .brand {
-            color: #00C2FF;
-            font-weight: bold;
+            color: #000000;
+            font-weight: 800;
             font-size: 14px;
+            letter-spacing: 0.08em;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: #ffffff;
+            }
+
+            .container {
+                border: none;
+                padding: 24px;
+            }
+
+            .info-section,
+            .total-section,
+            table {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
