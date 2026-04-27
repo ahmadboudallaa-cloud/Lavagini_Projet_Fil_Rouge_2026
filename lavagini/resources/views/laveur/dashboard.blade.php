@@ -145,18 +145,18 @@
                 <td class="py-6 text-center align-middle">
                     <div class="flex justify-center items-center gap-2">
                         @if($mission->statut === 'assignee')
-                            <form action="/laveur/missions/{{ $mission->id }}/demarrer" method="POST" class="inline m-0">
+                            <form action="{{ url('/laveur/missions/' . $mission->id . '/demarrer') }}" method="POST" class="inline m-0">
                                 @csrf
                                 <button type="submit" class="bg-green-500 text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-green-400">Demarrer</button>
                             </form>
                         @elseif($mission->statut === 'en_cours')
-                            <form action="/laveur/missions/{{ $mission->id }}/terminer" method="POST" class="inline m-0">
+                            <form action="{{ url('/laveur/missions/' . $mission->id . '/terminer') }}" method="POST" class="inline m-0">
                                 @csrf
                                 <button type="submit" class="bg-cyan-custom text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-[#00a3d9]">Terminer</button>
                             </form>
                         @endif
 
-                        <a href="/laveur/missions/{{ $mission->id }}" class="bg-white text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-gray-200 inline-block">Details</a>
+                        <a href="{{ url('/laveur/missions/' . $mission->id) }}" class="bg-white text-black px-5 py-1.5 rounded-full font-bold text-sm hover:bg-gray-200 inline-block">Details</a>
                     </div>
                 </td>
             </tr>

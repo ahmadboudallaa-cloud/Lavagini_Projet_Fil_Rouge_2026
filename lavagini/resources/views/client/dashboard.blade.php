@@ -297,7 +297,7 @@
                     <p class="text-sm text-gray-500 mt-1">Date: {{ $commande->created_at->format('d/m/Y') }}</p>
                 </div>
                 <div>
-                    <a href="/client/commandes/{{ $commande->id }}" class="bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-gray-200">Détails</a>
+                    <a href="{{ url('/client/commandes/' . $commande->id) }}" class="bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-gray-200">Détails</a>
                 </div>
             </div>
             @empty
@@ -389,7 +389,7 @@
                 </div>
 
                 <div class="flex space-x-3 pt-4 border-t border-gray-700">
-                    <a href="/client/commandes/{{ $commande->id }}" class="bg-white text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-gray-200 transition flex items-center space-x-2">
+                    <a href="{{ url('/client/commandes/' . $commande->id) }}" class="bg-white text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-gray-200 transition flex items-center space-x-2">
                         <span>Voir détails</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -397,7 +397,7 @@
                     </a>
                     
                     @if(($commande->statut === 'terminee' || $commande->statut === 'payee') && !$commande->evaluation && $commande->mission)
-                    <a href="/client/commandes/{{ $commande->id }}/evaluation" class="bg-cyan-custom text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-cyan-400 transition">⭐ Évaluer</a>
+                    <a href="{{ url('/client/commandes/' . $commande->id . '/evaluation') }}" class="bg-cyan-custom text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-cyan-400 transition">⭐ Évaluer</a>
                     @endif
 
                     @if($commande->evaluation)
@@ -462,7 +462,7 @@
                             <p class="text-gray-400 text-sm mb-1">Montant</p>
                             <p class="facture-amount-value text-cyan-custom text-3xl font-bold">{{ number_format((float) ($facture->commande?->montant ?? $facture->montant_affiche ?? $facture->montant ?? 0), 2) }} DH</p>
                         </div>
-                        <a href="/factures/{{ $facture->id }}/telecharger" class="facture-download bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
+                        <a href="{{ url('/factures/' . $facture->id . '/telecharger') }}" class="facture-download bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -493,7 +493,7 @@
     <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
         <h3 class="text-cyan-custom text-xl font-bold mb-8">Mon Profil</h3>
         
-        <form action="/client/profil/update" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ url('/client/profil/update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
             
@@ -565,7 +565,7 @@
             <span class="close" onclick="closeModal()">&times;</span>
         </div>
         
-        <form action="/commandes" method="POST">
+        <form action="{{ url('/commandes') }}" method="POST">
             @csrf
             
             <div class="form-group">

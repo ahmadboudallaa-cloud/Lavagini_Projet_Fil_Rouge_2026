@@ -204,8 +204,8 @@
                         @if($commande->statut === 'demande')
                             <button onclick="openAssignerModal({{ $commande->id }})" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700">Assigner</button>
                         @endif
-                        <a href="/admin/commandes/{{ $commande->id }}" class="bg-white text-black px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-200">Voir</a>
-                        <form action="/admin/commandes/{{ $commande->id }}" method="POST" class="inline m-0">
+                        <a href="{{ url('/admin/commandes/' . $commande->id) }}" class="bg-white text-black px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-200">Voir</a>
+                        <form action="{{ url('/admin/commandes/' . $commande->id) }}" method="POST" class="inline m-0">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-red-700" onclick="return confirm('Supprimer cette commande ?')">Supprimer</button>
@@ -267,7 +267,7 @@
                     </div>
                     
                     <div class="flex items-center space-x-3">
-                        <a href="/admin/missions/{{ $mission->id }}" class="bg-white text-black px-6 py-2.5 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
+                        <a href="{{ url('/admin/missions/' . $mission->id) }}" class="bg-white text-black px-6 py-2.5 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
                             <span>Détails</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
