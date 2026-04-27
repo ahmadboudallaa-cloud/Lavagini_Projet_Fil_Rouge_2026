@@ -32,42 +32,40 @@
 
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <p class="text-gray-400 text-sm mb-1">📍 Adresse</p>
+                    <p class="text-gray-400 text-sm mb-1">Adresse</p>
                     <p class="text-white">{{ $commande->adresse_service }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-400 text-sm mb-1">🚗 Véhicules</p>
+                    <p class="text-gray-400 text-sm mb-1">Véhicules</p>
                     <p class="text-white">{{ $commande->nombre_vehicules }} véhicule(s)</p>
                 </div>
                 @if($commande->zone)
                 <div>
-                    <p class="text-gray-400 text-sm mb-1">🗺️ Zone</p>
+                    <p class="text-gray-400 text-sm mb-1">Zone</p>
                     <p class="text-white">{{ $commande->zone->nom }} - {{ $commande->zone->ville }}</p>
                 </div>
                 @endif
                 @if($commande->mission)
                 <div>
-                    <p class="text-gray-400 text-sm mb-1">👨‍🔧 Laveur</p>
+                    <p class="text-gray-400 text-sm mb-1">Laveur</p>
                     <p class="text-white">{{ $commande->mission->laveur->name }}</p>
                 </div>
                 @endif
-                @if($commande->montant)
                 <div>
-                    <p class="text-gray-400 text-sm mb-1">💰 Montant</p>
-                    <p class="text-cyan-custom font-bold text-lg">{{ $commande->montant }} €</p>
+                    <p class="text-gray-400 text-sm mb-1">Montant</p>
+                    <p class="text-cyan-custom font-bold text-lg">{{ number_format($commande->montant, 2) }} DH</p>
                 </div>
-                @endif
             </div>
 
             <div class="flex space-x-3 pt-4 border-t border-gray-700">
                 <a href="/client/commandes/{{ $commande->id }}" class="bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-gray-200">Voir détails</a>
                 
                 @if(($commande->statut === 'terminee' || $commande->statut === 'payee') && !$commande->evaluation && $commande->mission)
-                <a href="/client/commandes/{{ $commande->id }}" class="bg-cyan-custom text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-cyan-400">⭐ Évaluer</a>
+                <a href="/client/commandes/{{ $commande->id }}" class="bg-cyan-custom text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-cyan-400">Évaluer</a>
                 @endif
 
                 @if($commande->evaluation)
-                <span class="bg-green-600 text-white px-5 py-2 rounded-full text-sm font-bold">✅ Évaluée</span>
+                <span class="bg-green-600 text-white px-5 py-2 rounded-full text-sm font-bold">Évaluée</span>
                 @endif
             </div>
         </div>

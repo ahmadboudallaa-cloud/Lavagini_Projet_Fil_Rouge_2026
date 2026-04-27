@@ -316,7 +316,6 @@
     @if($commande->evaluation)
         <div class="evaluation-panel">
             <h2 class="evaluation-panel__title">
-                <span>⭐</span>
                 Évaluation déjà envoyée
             </h2>
 
@@ -347,7 +346,6 @@
     @elseif($canEvaluate)
         <div class="evaluation-panel">
             <h2 class="evaluation-panel__title">
-                <span>⭐</span>
                 Évaluer le service
             </h2>
 
@@ -389,7 +387,7 @@
                     </div>
 
                     <button type="submit" class="evaluation-submit">
-                        ⭐ Envoyer mon évaluation
+                        Envoyer mon évaluation
                     </button>
                 </form>
             </div>

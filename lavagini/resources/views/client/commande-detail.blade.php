@@ -293,7 +293,6 @@
 
     <div class="detail-panel">
         <h2 class="detail-panel__title">
-            <span>📋</span>
             Informations de la commande
         </h2>
 
@@ -354,10 +353,9 @@
 
     @if($mission)
         <div class="detail-panel">
-            <h2 class="detail-panel__title">
-                <span>🚗</span>
-                Informations mission
-            </h2>
+        <h2 class="detail-panel__title">
+            Informations mission
+        </h2>
 
             <div class="detail-summary">
                 <div class="detail-summary__row">
@@ -408,10 +406,9 @@
 
     @if($commande->evaluation)
         <div class="detail-panel">
-            <h2 class="detail-panel__title">
-                <span>⭐</span>
-                Votre évaluation
-            </h2>
+        <h2 class="detail-panel__title">
+            Votre évaluation
+        </h2>
 
             <div class="detail-summary">
                 <div class="detail-summary__row">
@@ -443,17 +440,16 @@
         </div>
     @elseif($canEvaluate)
         <div class="detail-panel">
-            <h2 class="detail-panel__title">
-                <span>⭐</span>
-                Évaluation disponible
-            </h2>
+        <h2 class="detail-panel__title">
+            Évaluation disponible
+        </h2>
 
             <p class="detail-panel__subtitle">
                 Cette commande est terminée. Vous pouvez maintenant laisser votre avis sur la prestation avec la même interface que le dashboard.
             </p>
 
             <a href="/client/commandes/{{ $commande->id }}/evaluation" class="detail-link detail-link--primary">
-                ⭐ Aller à l’évaluation
+                Aller à l’évaluation
             </a>
         </div>
     @endif
@@ -463,7 +459,7 @@
             <form action="/paiement/stripe/{{ $commande->id }}" method="POST" style="display: inline;">
                 @csrf
                 <button type="submit" class="detail-link detail-link--success border-0">
-                    💳 Payer maintenant avec Stripe
+                    Payer maintenant avec Stripe
                 </button>
             </form>
         @endif

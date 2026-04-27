@@ -163,7 +163,7 @@
 
     <!-- Informations Client -->
     <div class="detail-card">
-        <h3>👤 Informations Client</h3>
+        <h3>Informations Client</h3>
         <div class="info-row">
             <span class="info-label">Nom :</span>
             <span class="info-value">{{ $commande->client->name }}</span>
@@ -184,7 +184,7 @@
 
     <!-- Informations Commande -->
     <div class="detail-card">
-        <h3>📋 Informations Commande</h3>
+        <h3>Informations Commande</h3>
         <div class="info-row">
             <span class="info-label">Statut :</span>
             <span class="info-value">
@@ -230,7 +230,7 @@
     <!-- Informations Mission -->
     @if($commande->mission)
     <div class="detail-card">
-        <h3>🚗 Informations Mission</h3>
+        <h3>Informations Mission</h3>
         <div class="info-row">
             <span class="info-label">Laveur assigné :</span>
             <span class="info-value">{{ $commande->mission->laveur->name }}</span>

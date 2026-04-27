@@ -121,7 +121,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <h1>🚗 LAVAGINI</h1>
+            <h1>LAVAGINI</h1>
             <p>Créer un nouveau mot de passe</p>
         </div>
 

@@ -77,14 +77,16 @@ class ChatController extends Controller
         }
 
         // Chercher une conversation existante
-        $conversation = Conversation::where(function($query) use ($user, $otherUserId) {
+        $conversationQuery = Conversation::where(function($query) use ($user, $otherUserId) {
                 $query->where('user1_id', $user->id)->where('user2_id', $otherUserId);
             })
             ->orWhere(function($query) use ($user, $otherUserId) {
                 $query->where('user1_id', $otherUserId)->where('user2_id', $user->id);
-            })
-            ->where('commande_id', $commandeId)
-            ->first();
+            });
+
+        $conversation = $commandeId
+            ? $conversationQuery->where('commande_id', $commandeId)->first()
+            : $conversationQuery->whereNull('commande_id')->first();
 
         // Créer une nouvelle conversation si elle n'existe pas
         if (!$conversation) {
@@ -126,7 +128,7 @@ class ChatController extends Controller
         // Mettre à jour la date du dernier message
         $conversation->update(['last_message_at' => now()]);
 
-        if ($request->ajax()) {
+        if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => $message->load('sender')
@@ -140,7 +142,7 @@ class ChatController extends Controller
     public function getNewMessages($id, Request $request)
     {
         $user = Auth::user();
-        $lastMessageId = $request->input('last_message_id', 0);
+        $lastMessageId = (int) $request->input('last_message_id', 0);
 
         $conversation = Conversation::where('id', $id)
             ->where(function($query) use ($user) {
@@ -151,6 +153,7 @@ class ChatController extends Controller
 
         $messages = Message::where('conversation_id', $conversation->id)
             ->where('id', '>', $lastMessageId)
+            ->where('sender_id', '!=', $user->id)
             ->with('sender')
             ->orderBy('created_at', 'asc')
             ->get();
@@ -211,33 +214,35 @@ class ChatController extends Controller
             return true;
         }
 
-        // Laveur peut parler avec admin ou client de sa mission
+        // Laveur peut parler avec un client de ses missions
         if ($user->isLaveur()) {
             if ($otherUser->isAdmin()) {
                 return true;
             }
-            
-            if ($commandeId) {
-                $mission = DB::table('missions')
+
+            if ($otherUser->isClient()) {
+                $query = DB::table('missions')
                     ->join('commandes', 'missions.commande_id', '=', 'commandes.id')
-                    ->where('missions.commande_id', $commandeId)
                     ->where('missions.laveur_id', $user->id)
-                    ->where('commandes.client_id', $otherUserId)
-                    ->exists();
-                return $mission;
+                    ->where('commandes.client_id', $otherUser->id);
+
+                return $commandeId
+                    ? $query->where('missions.commande_id', $commandeId)->exists()
+                    : $query->exists();
             }
         }
 
-        // Client peut parler avec le laveur de sa commande
+        // Client peut parler avec un laveur assigné à une de ses commandes
         if ($user->isClient()) {
-            if ($commandeId) {
-                $mission = DB::table('missions')
+            if ($otherUser->isLaveur()) {
+                $query = DB::table('missions')
                     ->join('commandes', 'missions.commande_id', '=', 'commandes.id')
-                    ->where('missions.commande_id', $commandeId)
                     ->where('commandes.client_id', $user->id)
-                    ->where('missions.laveur_id', $otherUserId)
-                    ->exists();
-                return $mission;
+                    ->where('missions.laveur_id', $otherUser->id);
+
+                return $commandeId
+                    ? $query->where('missions.commande_id', $commandeId)->exists()
+                    : $query->exists();
             }
         }
 

@@ -349,10 +349,10 @@
 
         <div class="px-10 py-8" style="{{ request()->is('chat*') ? 'padding: 20px 40px !important;' : '' }}">
             @if(session('success'))
-                <div class="bg-cyan-custom/20 border border-cyan-custom text-cyan-custom px-4 py-3 rounded-xl mb-6 font-medium">✅ {{ session('success') }}</div>
+                <div class="bg-cyan-custom/20 border border-cyan-custom text-cyan-custom px-4 py-3 rounded-xl mb-6 font-medium">{{ session('success') }}</div>
             @endif
             @if(session('error'))
-                <div class="bg-red-500/20 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 font-medium">❌ {{ session('error') }}</div>
+                <div class="bg-red-500/20 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 font-medium">{{ session('error') }}</div>
             @endif
 
             @yield('content')

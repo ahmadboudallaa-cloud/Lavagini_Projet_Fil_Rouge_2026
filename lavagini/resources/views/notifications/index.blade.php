@@ -140,7 +140,7 @@
 
     <div class="notifications-container">
         <div class="notifications-header">
-            <h2>🔔 Mes Notifications</h2>
+            <h2>Mes Notifications</h2>
             @if($notifications->where('lu', false)->count() > 0)
             <button class="btn-marquer-tout" onclick="marquerToutCommeLu()">Tout marquer comme lu</button>
             @endif

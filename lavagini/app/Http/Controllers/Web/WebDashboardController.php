@@ -8,6 +8,8 @@ use App\Models\Mission;
 use App\Models\User;
 use App\Models\ZoneGeographique;
 use App\Models\Evaluation;
+use App\Models\Tarif;
+use App\Models\Facture;
 use Illuminate\Support\Facades\Auth;
 
 class WebDashboardController extends Controller
@@ -29,7 +31,22 @@ class WebDashboardController extends Controller
             ->with(['zone', 'mission.laveur'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
-            ->get();
+            ->get()
+            ->map(function (Commande $commande) {
+                $commande->setAttribute('montant', $this->getMontantCommande($commande));
+                return $commande;
+            });
+
+        $factures = Facture::whereHas('commande', function ($query) use ($user) {
+            $query->where('client_id', $user->id);
+        })
+            ->with(['commande', 'paiement'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function (Facture $facture) {
+                $facture->setAttribute('montant_affiche', $this->getMontantFacture($facture));
+                return $facture;
+            });
 
         $zones = ZoneGeographique::all();
 
@@ -38,8 +55,44 @@ class WebDashboardController extends Controller
             'commandesEnCours',
             'commandesTerminees',
             'dernieresCommandes',
+            'factures',
             'zones'
         ));
+    }
+
+    private function getMontantCommande(Commande $commande): float
+    {
+        if ((float) $commande->montant > 0) {
+            return (float) $commande->montant;
+        }
+
+        $tarifsParDefaut = [
+            'lavage_standard' => 100,
+            'lavage_complet' => 150,
+            'lavage_premium' => 250,
+        ];
+
+        $tarif = Tarif::where('type_service', $commande->type_service)->first();
+        $prixUnitaire = $tarif ? (float) $tarif->prix_unitaire : ($tarifsParDefaut[$commande->type_service] ?? 0);
+
+        return $prixUnitaire * (int) $commande->nombre_vehicules;
+    }
+
+    private function getMontantFacture(Facture $facture): float
+    {
+        if ((float) $facture->montant > 0) {
+            return (float) $facture->montant;
+        }
+
+        if ($facture->paiement && (float) $facture->paiement->montant > 0) {
+            return (float) $facture->paiement->montant;
+        }
+
+        if ($facture->commande) {
+            return $this->getMontantCommande($facture->commande);
+        }
+
+        return 0.0;
     }
 
     // Dashboard Laveur

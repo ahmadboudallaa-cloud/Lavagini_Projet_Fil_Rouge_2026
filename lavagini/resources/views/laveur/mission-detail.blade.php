@@ -92,7 +92,7 @@
 
     <!-- Informations Mission -->
     <div class="detail-card">
-        <h3>🚗 Informations Mission</h3>
+        <h3>Informations Mission</h3>
         <div class="info-row">
             <span class="info-label">Statut :</span>
             <span class="info-value">
@@ -131,7 +131,7 @@
 
     <!-- Informations Client -->
     <div class="detail-card">
-        <h3>👤 Informations Client</h3>
+        <h3>Informations Client</h3>
         <div class="info-row">
             <span class="info-label">Nom :</span>
             <span class="info-value">{{ $mission->commande->client->name }}</span>
@@ -152,7 +152,7 @@
 
     <!-- Informations Commande -->
     <div class="detail-card">
-        <h3>📋 Informations Commande</h3>
+        <h3>Informations Commande</h3>
         <div class="info-row">
             <span class="info-label">Nombre de véhicules :</span>
             <span class="info-value">{{ $mission->commande->nombre_vehicules }}</span>
@@ -219,7 +219,7 @@
         @elseif($mission->statut === 'terminee' && $mission->commande->mode_paiement === 'fin_service' && $mission->commande->statut !== 'payee')
         <form action="/paiement/fin-service/{{ $mission->commande->id }}" method="POST" style="display: inline;" onsubmit="return confirm('Confirmez-vous que le client a payé ?');">
             @csrf
-            <button type="submit" class="btn btn-success">💵 Marquer comme payé</button>
+            <button type="submit" class="btn btn-success">Marquer comme payé</button>
         </form>
         @endif
     </div>

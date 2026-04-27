@@ -6,7 +6,15 @@
 
 @section('content')
 <div class="bg-dark-card rounded-[30px] p-8 shadow-xl">
-    <h3 class="text-cyan-custom text-xl font-bold mb-8">Messagerie</h3>
+    <div class="flex justify-between items-center mb-8 gap-4 flex-wrap">
+        <div>
+            <h3 class="text-cyan-custom text-xl font-bold">Messagerie</h3>
+            <p class="text-gray-400 mt-2">Retrouvez vos conversations ou démarrez-en une nouvelle.</p>
+        </div>
+        <a href="{{ route('chat.users') }}" class="bg-cyan-custom text-black px-5 py-2.5 rounded-full font-bold hover:bg-cyan-400 transition">
+            Nouvelle conversation
+        </a>
+    </div>
     
     <div class="space-y-3">
         @forelse($conversations as $conversation)
@@ -55,6 +63,11 @@
                 <i class="fas fa-inbox"></i>
                 <p>Aucune conversation</p>
                 <small>Vos conversations apparaîtront ici</small>
+                <div class="mt-6">
+                    <a href="{{ route('chat.users') }}" class="inline-flex items-center bg-cyan-custom text-black px-5 py-2.5 rounded-full font-bold hover:bg-cyan-400 transition">
+                        Démarrer une conversation
+                    </a>
+                </div>
             </div>
         @endforelse
     </div>

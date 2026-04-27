@@ -44,7 +44,7 @@
         @endforeach
     </div>
 
-    <form class="chat-input-form" id="chatForm">
+    <form class="chat-input-form" id="chatForm" action="{{ route('chat.send', $conversation->id) }}" method="POST">
         @csrf
         <textarea 
             name="message" 
@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('chatForm');
     const messageInput = document.getElementById('messageInput');
     const conversationId = {{ $conversation->id }};
-    let lastMessageId = {{ $messages->last()->id ?? 0 }};
+    let lastMessageId = {{ optional($messages->last())->id ?? 0 }};
     
     // Scroll vers le bas au chargement
     scrollToBottom();

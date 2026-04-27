@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
-use App\Models\ZoneGeographique;
+use App\Models\Facture;
 use App\Models\Notification;
+use App\Models\Tarif;
+use App\Models\ZoneGeographique;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,9 +25,7 @@ class WebCommandeController extends Controller
             'description' => 'nullable|string'
         ]);
 
-        // Calculer le montant automatiquement
-        $tarif = \App\Models\Tarif::where('type_service', $request->type_service)->first();
-        $montant = $tarif ? ($tarif->prix_unitaire * $request->nombre_vehicules) : 0;
+        $montant = $this->getMontantParTypeService($request->type_service, (int) $request->nombre_vehicules);
 
         $commande = Commande::create([
             'client_id' => Auth::id(),
@@ -43,7 +43,7 @@ class WebCommandeController extends Controller
         Notification::create([
             'user_id' => Auth::id(),
             'titre' => 'Commande créée',
-            'message' => 'Votre demande de service a été enregistrée avec succès. Montant: ' . $montant . '€',
+            'message' => 'Votre demande de service a été enregistrée avec succès. Montant: ' . number_format($montant, 2) . ' DH',
             'type' => 'commande'
         ]);
 
@@ -53,7 +53,7 @@ class WebCommandeController extends Controller
             Notification::create([
                 'user_id' => $admin->id,
                 'titre' => 'Nouvelle commande',
-                'message' => 'Une nouvelle commande a été créée par ' . Auth::user()->name . '. Montant: ' . $montant . '€',
+                'message' => 'Une nouvelle commande a été créée par ' . Auth::user()->name . '. Montant: ' . number_format($montant, 2) . ' DH',
                 'type' => 'commande'
             ]);
         }
@@ -63,7 +63,21 @@ class WebCommandeController extends Controller
             return redirect('/paiement/stripe/' . $commande->id);
         }
 
-        return redirect('/dashboard')->with('success', 'Commande créée avec succès ! Montant: ' . $montant . '€');
+        return redirect('/dashboard')->with('success', 'Commande créée avec succès ! Montant: ' . number_format($montant, 2) . ' DH');
+    }
+
+    private function getMontantParTypeService(string $typeService, int $nombreVehicules): float
+    {
+        $tarifsParDefaut = [
+            'lavage_standard' => 100,
+            'lavage_complet' => 150,
+            'lavage_premium' => 250,
+        ];
+
+        $tarif = Tarif::where('type_service', $typeService)->first();
+        $prixUnitaire = $tarif ? (float) $tarif->prix_unitaire : ($tarifsParDefaut[$typeService] ?? 0);
+
+        return $prixUnitaire * $nombreVehicules;
     }
 
     // Voir les commandes du client
@@ -80,10 +94,10 @@ class WebCommandeController extends Controller
     // Voir les factures du client
     public function mesFactures()
     {
-        $factures = \App\Models\Facture::whereHas('commande', function($query) {
+        $factures = Facture::whereHas('commande', function ($query) {
             $query->where('client_id', Auth::id());
         })
-        ->with(['commande'])
+        ->with(['commande', 'paiement'])
         ->orderBy('created_at', 'desc')
         ->get();
 

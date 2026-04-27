@@ -41,7 +41,7 @@
                 <div class="flex items-center space-x-6">
                     <div class="text-right">
                         <p class="text-gray-400 text-sm mb-1">Montant</p>
-                        <p class="text-cyan-custom text-3xl font-bold">{{ $facture->montant }}€</p>
+                        <p class="text-cyan-custom text-3xl font-bold">{{ number_format($facture->montant, 2) }} DH</p>
                     </div>
                     <a href="/factures/{{ $facture->id }}/telecharger" class="bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

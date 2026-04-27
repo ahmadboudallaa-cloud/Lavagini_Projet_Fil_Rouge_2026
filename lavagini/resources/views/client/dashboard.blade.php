@@ -361,10 +361,7 @@
         <h3 class="text-cyan-custom text-2xl font-bold mb-8">Mes factures</h3>
         
         <div class="space-y-5">
-            @php
-                $factures = auth()->user()->commandes()->whereHas('facture')->with('facture')->get()->pluck('facture');
-            @endphp
-            @forelse($factures as $facture)
+            @forelse(($factures ?? collect()) as $facture)
             <div class="bg-dark-hover border-2 border-gray-700 rounded-2xl p-6 hover:border-cyan-custom transition duration-300">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-6 flex-1">
@@ -396,7 +393,7 @@
                     <div class="flex items-center space-x-6">
                         <div class="text-right">
                             <p class="text-gray-400 text-sm mb-1">Montant</p>
-                            <p class="text-cyan-custom text-3xl font-bold">{{ $facture->montant }} DH</p>
+                            <p class="text-cyan-custom text-3xl font-bold">{{ number_format((float) ($facture->commande?->montant ?? $facture->montant_affiche ?? $facture->montant ?? 0), 2) }} DH</p>
                         </div>
                         <a href="/factures/{{ $facture->id }}/telecharger" class="bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -136,7 +136,16 @@
         .notification-icon {
             position: relative;
             cursor: pointer;
-            font-size: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .notification-label {
+            font-size: 0.95rem;
+            font-weight: 600;
         }
 
         .notification-badge {
@@ -309,7 +318,7 @@
                     <li><a href="/profil">Mon Profil</a></li>
                     <li>
                         <div class="notification-icon" onclick="toggleNotifications()">
-                            🔔
+                            <span class="notification-label">Notifications</span>
                             @php
                                 $notificationsNonLues = auth()->user()->notifications()->where('lu', false)->count();
                             @endphp
