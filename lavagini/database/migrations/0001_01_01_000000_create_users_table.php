@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -39,6 +41,19 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        if (! DB::table('users')->where('email', 'admin@lavagini.com')->exists()) {
+            DB::table('users')->insert([
+                'name' => 'Admin Lavagini',
+                'email' => 'admin@lavagini.com',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'telephone' => '0612345678',
+                'adresse' => '123 Boulevard Zerktouni, Casablanca',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 
     /**

@@ -10,64 +10,15 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Créer un administrateur
-        User::create([
-            'name' => 'Admin Lavagini',
-            'email' => 'admin@lavagini.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'telephone' => '0612345678',
-            'adresse' => '123 Boulevard Zerktouni, Casablanca'
-        ]);
-
-        // Créer des laveurs
-        User::create([
-            'name' => 'Jean Laveur',
-            'email' => 'jean@lavagini.com',
-            'password' => Hash::make('password'),
-            'role' => 'laveur',
-            'telephone' => '0623456789',
-            'adresse' => '45 Avenue Hassan II, Rabat'
-        ]);
-
-        User::create([
-            'name' => 'Marie Nettoyage',
-            'email' => 'marie@lavagini.com',
-            'password' => Hash::make('password'),
-            'role' => 'laveur',
-            'telephone' => '0634567890',
-            'adresse' => '78 Avenue Mohammed VI, Marrakech'
-        ]);
-
-        // Créer des clients
-        User::create([
-            'name' => 'Pierre Client',
-            'email' => 'pierre@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'client',
-            'telephone' => '0645678901',
-            'adresse' => '12 Rue Allal Ben Abdellah, Fes',
-            'type_client' => 'particulier'
-        ]);
-
-        User::create([
-            'name' => 'Sophie Dupont',
-            'email' => 'sophie@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'client',
-            'telephone' => '0656789012',
-            'adresse' => '34 Boulevard Pasteur, Tanger',
-            'type_client' => 'particulier'
-        ]);
-
-        User::create([
-            'name' => 'Agence Auto Plus',
-            'email' => 'agence@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'client',
-            'telephone' => '0667890123',
-            'adresse' => '56 Avenue Moulay Youssef, Casablanca',
-            'type_client' => 'agence'
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@lavagini.com'],
+            [
+                'name' => 'Admin Lavagini',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'telephone' => '0612345678',
+                'adresse' => '123 Boulevard Zerktouni, Casablanca',
+            ]
+        );
     }
 }
