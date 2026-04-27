@@ -13,25 +13,23 @@ class MissionController extends Controller
     // Assigner une mission à un laveur (Admin)
     public function assigner(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'commande_id' => 'required|exists:commandes,id',
             'laveur_id' => 'required|exists:users,id'
         ]);
 
         $mission = Mission::create([
-            'commande_id' => $request->commande_id,
-            'laveur_id' => $request->laveur_id,
+            'commande_id' => $validated['commande_id'],
+            'laveur_id' => $validated['laveur_id'],
             'statut' => 'assignee'
         ]);
 
-        // Mettre à jour le statut de la commande
-        $commande = Commande::find($request->commande_id);
-        $commande->statut = 'assignee';
-        $commande->save();
+        $commande = Commande::find($validated['commande_id']);
+        $this->updateCommandeStatut($commande, 'assignee');
 
         // Notification au laveur
         Notification::create([
-            'user_id' => $request->laveur_id,
+            'user_id' => $validated['laveur_id'],
             'titre' => 'Nouvelle mission',
             'message' => 'Une nouvelle mission vous a été assignée',
             'type' => 'mission'
@@ -57,6 +55,7 @@ class MissionController extends Controller
         $missions = Mission::where('laveur_id', Auth::id())
             ->with(['commande.client', 'commande.zone'])
             ->get();
+
         return response()->json($missions);
     }
 
@@ -64,8 +63,8 @@ class MissionController extends Controller
     public function demarrer($id)
     {
         $mission = Mission::findOrFail($id);
-        
-        if ($mission->laveur_id != Auth::id()) {
+
+        if (!$this->isCurrentUserMissionOwner($mission)) {
             return response()->json(['message' => 'Non autorisé'], 403);
         }
 
@@ -73,9 +72,7 @@ class MissionController extends Controller
         $mission->date_debut = now();
         $mission->save();
 
-        // Mettre à jour le statut de la commande
-        $mission->commande->statut = 'en_cours';
-        $mission->commande->save();
+        $this->updateCommandeStatut($mission->commande, 'en_cours');
 
         return response()->json([
             'message' => 'Mission démarrée',
@@ -86,26 +83,24 @@ class MissionController extends Controller
     // Terminer une mission (Laveur)
     public function terminer(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'temps_passe' => 'required|integer|min:1',
             'commentaire' => 'nullable|string'
         ]);
 
         $mission = Mission::findOrFail($id);
-        
-        if ($mission->laveur_id != Auth::id()) {
+
+        if (!$this->isCurrentUserMissionOwner($mission)) {
             return response()->json(['message' => 'Non autorisé'], 403);
         }
 
         $mission->statut = 'terminee';
         $mission->date_fin = now();
-        $mission->temps_passe = $request->temps_passe;
-        $mission->commentaire = $request->commentaire;
+        $mission->temps_passe = $validated['temps_passe'];
+        $mission->commentaire = $validated['commentaire'] ?? null;
         $mission->save();
 
-        // Mettre à jour le statut de la commande
-        $mission->commande->statut = 'terminee';
-        $mission->commande->save();
+        $this->updateCommandeStatut($mission->commande, 'terminee');
 
         // Notification au client
         Notification::create([
@@ -125,6 +120,18 @@ class MissionController extends Controller
     public function index()
     {
         $missions = Mission::with(['commande.client', 'laveur'])->get();
+
         return response()->json($missions);
+    }
+
+    private function isCurrentUserMissionOwner(Mission $mission): bool
+    {
+        return $mission->laveur_id == Auth::id();
+    }
+
+    private function updateCommandeStatut($commande, string $statut): void
+    {
+        $commande->statut = $statut;
+        $commande->save();
     }
 }

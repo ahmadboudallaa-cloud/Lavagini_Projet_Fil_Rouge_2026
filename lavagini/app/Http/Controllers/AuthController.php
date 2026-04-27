@@ -12,7 +12,7 @@ class AuthController extends Controller
     // Inscription d'un client
     public function register(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
@@ -22,13 +22,13 @@ class AuthController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'role' => 'client',
-            'telephone' => $request->telephone,
-            'adresse' => $request->adresse,
-            'type_client' => $request->type_client
+            'telephone' => $validated['telephone'] ?? null,
+            'adresse' => $validated['adresse'] ?? null,
+            'type_client' => $validated['type_client'] ?? null
         ]);
 
         return response()->json([
@@ -40,13 +40,14 @@ class AuthController extends Controller
     // Connexion
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
+
             return response()->json([
                 'message' => 'Connexion réussie',
                 'user' => $user
@@ -62,6 +63,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
+
         return response()->json([
             'message' => 'Déconnexion réussie'
         ]);

@@ -268,13 +268,19 @@
         </div>
 
         <nav class="flex flex-col w-full pr-4 space-y-2">
-            <a href="/client/dashboard" class="menu-item {{ request()->is('client/dashboard') && !session('activeTab') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Dashboard</a>
-            <a href="#" onclick="event.preventDefault(); showTab('commandes', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Commandes</a>
-            <a href="#" onclick="event.preventDefault(); showTab('factures', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Factures</a>
+            <a href="/client/dashboard" class="menu-item {{ request()->is('client/dashboard') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Dashboard</a>
+            @if(request()->is('client/dashboard'))
+                <a href="#" onclick="event.preventDefault(); showTab('commandes', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Commandes</a>
+                <a href="#" onclick="event.preventDefault(); showTab('factures', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Factures</a>
+                <a href="#" onclick="event.preventDefault(); showTab('profil', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4">Mon Profil</a>
+            @else
+                <a href="/client/commandes" class="menu-item {{ request()->is('client/commandes*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Commandes</a>
+                <a href="/client/factures" class="menu-item {{ request()->is('client/factures*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Factures</a>
+                <a href="/profil" class="menu-item {{ request()->is('profil*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4">Mon Profil</a>
+            @endif
             <a href="/chat" class="menu-item {{ request()->is('chat*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">
                 Messagerie
             </a>
-            <a href="#" onclick="event.preventDefault(); showTab('profil', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4">Mon Profil</a>
         </nav>
     </aside>
 

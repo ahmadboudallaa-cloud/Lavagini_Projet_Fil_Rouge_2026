@@ -17,13 +17,13 @@ class ZoneGeographiqueController extends Controller
     // Créer une zone (Admin)
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'ville' => 'required|string|max:255',
             'code_postal' => 'required|string|max:10'
         ]);
 
-        $zone = ZoneGeographique::create($request->all());
+        $zone = ZoneGeographique::create($validated);
 
         return response()->json([
             'message' => 'Zone créée avec succès',
@@ -43,13 +43,13 @@ class ZoneGeographiqueController extends Controller
     {
         $zone = ZoneGeographique::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'nom' => 'sometimes|string|max:255',
             'ville' => 'sometimes|string|max:255',
             'code_postal' => 'sometimes|string|max:10'
         ]);
 
-        $zone->update($request->all());
+        $zone->update($validated);
 
         return response()->json([
             'message' => 'Zone mise à jour',

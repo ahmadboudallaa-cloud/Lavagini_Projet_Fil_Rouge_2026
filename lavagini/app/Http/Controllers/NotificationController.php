@@ -11,21 +11,21 @@ class NotificationController extends Controller
     // Voir les notifications de l'utilisateur connecté
     public function mesNotifications()
     {
-        $notifications = Notification::where('user_id', Auth::id())
+        $notifications = $this->notificationsForCurrentUser()
             ->orderBy('created_at', 'desc')
             ->get();
-        
+
         return view('notifications.index', compact('notifications'));
     }
 
     // Voir les notifications non lues
     public function nonLues()
     {
-        $notifications = Notification::where('user_id', Auth::id())
+        $notifications = $this->notificationsForCurrentUser()
             ->where('lu', false)
             ->orderBy('created_at', 'desc')
             ->get();
-        
+
         return response()->json($notifications);
     }
 
@@ -33,7 +33,7 @@ class NotificationController extends Controller
     public function marquerCommeLue($id)
     {
         $notification = Notification::findOrFail($id);
-        
+
         if ($notification->user_id != Auth::id()) {
             return response()->json(['message' => 'Non autorisé'], 403);
         }
@@ -48,7 +48,7 @@ class NotificationController extends Controller
     // Marquer toutes les notifications comme lues
     public function marquerToutCommeLu()
     {
-        Notification::where('user_id', Auth::id())
+        $this->notificationsForCurrentUser()
             ->where('lu', false)
             ->update(['lu' => true]);
 
@@ -60,10 +60,15 @@ class NotificationController extends Controller
     // Obtenir le nombre de notifications non lues
     public function compterNonLues()
     {
-        $count = Notification::where('user_id', Auth::id())
+        $count = $this->notificationsForCurrentUser()
             ->where('lu', false)
             ->count();
-        
+
         return response()->json(['count' => $count]);
+    }
+
+    private function notificationsForCurrentUser()
+    {
+        return Notification::where('user_id', Auth::id());
     }
 }

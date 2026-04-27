@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Commande;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
-use App\Models\Commande;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -15,21 +15,19 @@ class ChatController extends Controller
     // Afficher la liste des conversations
     public function index()
     {
-        $user = Auth::user();
-        
-        // Récupérer toutes les conversations de l'utilisateur
+        $user = $this->currentUser();
+
         $conversations = Conversation::where('user1_id', $user->id)
             ->orWhere('user2_id', $user->id)
             ->with(['user1', 'user2', 'lastMessage', 'commande'])
             ->orderBy('last_message_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($conversation) use ($user) {
+                $conversation->other_user = $conversation->getOtherUser($user->id);
+                $conversation->unread_count = $conversation->unreadCount($user->id);
 
-        // Ajouter les informations supplémentaires
-        $conversations = $conversations->map(function($conversation) use ($user) {
-            $conversation->other_user = $conversation->getOtherUser($user->id);
-            $conversation->unread_count = $conversation->unreadCount($user->id);
-            return $conversation;
-        });
+                return $conversation;
+            });
 
         return view('chat.index', compact('conversations'));
     }
@@ -37,23 +35,11 @@ class ChatController extends Controller
     // Afficher une conversation spécifique
     public function show($id)
     {
-        $user = Auth::user();
-        
-        $conversation = Conversation::with(['user1', 'user2', 'commande'])
-            ->where('id', $id)
-            ->where(function($query) use ($user) {
-                $query->where('user1_id', $user->id)
-                      ->orWhere('user2_id', $user->id);
-            })
-            ->firstOrFail();
+        $user = $this->currentUser();
+        $conversation = $this->findUserConversation($user, $id);
 
-        // Marquer les messages comme lus
-        Message::where('conversation_id', $conversation->id)
-            ->where('sender_id', '!=', $user->id)
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
+        $this->markConversationMessagesAsRead($conversation, $user);
 
-        // Récupérer les messages
         $messages = Message::where('conversation_id', $conversation->id)
             ->with('sender')
             ->orderBy('created_at', 'asc')
@@ -67,7 +53,7 @@ class ChatController extends Controller
     // Créer ou récupérer une conversation
     public function getOrCreateConversation(Request $request)
     {
-        $user = Auth::user();
+        $user = $this->currentUser();
         $otherUserId = $request->input('user_id');
         $commandeId = $request->input('commande_id');
 
@@ -76,13 +62,7 @@ class ChatController extends Controller
             return response()->json(['error' => 'Non autorisé'], 403);
         }
 
-        // Chercher une conversation existante
-        $conversationQuery = Conversation::where(function($query) use ($user, $otherUserId) {
-                $query->where('user1_id', $user->id)->where('user2_id', $otherUserId);
-            })
-            ->orWhere(function($query) use ($user, $otherUserId) {
-                $query->where('user1_id', $otherUserId)->where('user2_id', $user->id);
-            });
+        $conversationQuery = $this->conversationQueryBetweenUsers($user, $otherUserId);
 
         $conversation = $commandeId
             ? $conversationQuery->where('commande_id', $commandeId)->first()
@@ -108,16 +88,9 @@ class ChatController extends Controller
             'message' => 'required|string|max:5000'
         ]);
 
-        $user = Auth::user();
-        
-        $conversation = Conversation::where('id', $id)
-            ->where(function($query) use ($user) {
-                $query->where('user1_id', $user->id)
-                      ->orWhere('user2_id', $user->id);
-            })
-            ->firstOrFail();
+        $user = $this->currentUser();
+        $conversation = $this->findUserConversation($user, $id);
 
-        // Créer le message
         $message = Message::create([
             'conversation_id' => $conversation->id,
             'sender_id' => $user->id,
@@ -125,7 +98,6 @@ class ChatController extends Controller
             'is_read' => false
         ]);
 
-        // Mettre à jour la date du dernier message
         $conversation->update(['last_message_at' => now()]);
 
         if ($request->expectsJson() || $request->ajax()) {
@@ -141,15 +113,9 @@ class ChatController extends Controller
     // Récupérer les nouveaux messages (AJAX)
     public function getNewMessages($id, Request $request)
     {
-        $user = Auth::user();
+        $user = $this->currentUser();
         $lastMessageId = (int) $request->input('last_message_id', 0);
-
-        $conversation = Conversation::where('id', $id)
-            ->where(function($query) use ($user) {
-                $query->where('user1_id', $user->id)
-                      ->orWhere('user2_id', $user->id);
-            })
-            ->firstOrFail();
+        $conversation = $this->findUserConversation($user, $id);
 
         $messages = Message::where('conversation_id', $conversation->id)
             ->where('id', '>', $lastMessageId)
@@ -158,11 +124,7 @@ class ChatController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Marquer comme lus
-        Message::where('conversation_id', $conversation->id)
-            ->where('sender_id', '!=', $user->id)
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
+        $this->markConversationMessagesAsRead($conversation, $user);
 
         return response()->json(['messages' => $messages]);
     }
@@ -170,35 +132,15 @@ class ChatController extends Controller
     // Liste des utilisateurs disponibles pour le chat
     public function availableUsers()
     {
-        $user = Auth::user();
+        $user = $this->currentUser();
         $users = collect();
 
         if ($user->isAdmin()) {
-            // Admin peut parler avec tous les laveurs et clients
-            $users = User::whereIn('role', ['laveur', 'client'])
-                ->where('id', '!=', $user->id)
-                ->get();
+            $users = $this->availableUsersForAdmin($user);
         } elseif ($user->isLaveur()) {
-            // Laveur peut parler avec l'admin qui lui a assigné des missions
-            $adminIds = DB::table('missions')
-                ->join('commandes', 'missions.commande_id', '=', 'commandes.id')
-                ->where('missions.laveur_id', $user->id)
-                ->distinct()
-                ->pluck('commandes.client_id');
-            
-            $users = User::where('role', 'admin')
-                ->orWhereIn('id', $adminIds)
-                ->where('id', '!=', $user->id)
-                ->get();
+            $users = $this->availableUsersForLaveur($user);
         } elseif ($user->isClient()) {
-            // Client peut parler avec les laveurs de ses commandes
-            $laveurIds = DB::table('missions')
-                ->join('commandes', 'missions.commande_id', '=', 'commandes.id')
-                ->where('commandes.client_id', $user->id)
-                ->distinct()
-                ->pluck('missions.laveur_id');
-            
-            $users = User::whereIn('id', $laveurIds)->get();
+            $users = $this->availableUsersForClient($user);
         }
 
         return view('chat.available-users', compact('users'));
@@ -247,5 +189,73 @@ class ChatController extends Controller
         }
 
         return false;
+    }
+
+    private function currentUser(): User
+    {
+        return Auth::user();
+    }
+
+    private function findUserConversation(User $user, $id): Conversation
+    {
+        return Conversation::with(['user1', 'user2', 'commande'])
+            ->where('id', $id)
+            ->where(function ($query) use ($user) {
+                $query->where('user1_id', $user->id)
+                    ->orWhere('user2_id', $user->id);
+            })
+            ->firstOrFail();
+    }
+
+    private function conversationQueryBetweenUsers(User $user, $otherUserId)
+    {
+        return Conversation::where(function ($query) use ($user, $otherUserId) {
+                $query->where('user1_id', $user->id)
+                    ->where('user2_id', $otherUserId);
+            })
+            ->orWhere(function ($query) use ($user, $otherUserId) {
+                $query->where('user1_id', $otherUserId)
+                    ->where('user2_id', $user->id);
+            });
+    }
+
+    private function markConversationMessagesAsRead(Conversation $conversation, User $user): void
+    {
+        Message::where('conversation_id', $conversation->id)
+            ->where('sender_id', '!=', $user->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+    }
+
+    private function availableUsersForAdmin(User $user)
+    {
+        return User::whereIn('role', ['laveur', 'client'])
+            ->where('id', '!=', $user->id)
+            ->get();
+    }
+
+    private function availableUsersForLaveur(User $user)
+    {
+        $adminIds = DB::table('missions')
+            ->join('commandes', 'missions.commande_id', '=', 'commandes.id')
+            ->where('missions.laveur_id', $user->id)
+            ->distinct()
+            ->pluck('commandes.client_id');
+
+        return User::where('role', 'admin')
+            ->orWhereIn('id', $adminIds)
+            ->where('id', '!=', $user->id)
+            ->get();
+    }
+
+    private function availableUsersForClient(User $user)
+    {
+        $laveurIds = DB::table('missions')
+            ->join('commandes', 'missions.commande_id', '=', 'commandes.id')
+            ->where('commandes.client_id', $user->id)
+            ->distinct()
+            ->pluck('missions.laveur_id');
+
+        return User::whereIn('id', $laveurIds)->get();
     }
 }

@@ -12,6 +12,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+
         return response()->json($users);
     }
 
@@ -19,6 +20,7 @@ class UserController extends Controller
     public function clients()
     {
         $clients = User::where('role', 'client')->get();
+
         return response()->json($clients);
     }
 
@@ -26,13 +28,14 @@ class UserController extends Controller
     public function laveurs()
     {
         $laveurs = User::where('role', 'laveur')->get();
+
         return response()->json($laveurs);
     }
 
     // Créer un compte laveur (Admin)
     public function creerLaveur(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
@@ -41,12 +44,12 @@ class UserController extends Controller
         ]);
 
         $laveur = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'role' => 'laveur',
-            'telephone' => $request->telephone,
-            'adresse' => $request->adresse
+            'telephone' => $validated['telephone'] ?? null,
+            'adresse' => $validated['adresse'] ?? null
         ]);
 
         return response()->json([
@@ -59,6 +62,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
+
         return response()->json($user);
     }
 
@@ -67,14 +71,14 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $id,
             'telephone' => 'nullable|string',
             'adresse' => 'nullable|string'
         ]);
 
-        $user->update($request->only(['name', 'email', 'telephone', 'adresse']));
+        $user->update($validated);
 
         return response()->json([
             'message' => 'Utilisateur mis à jour',

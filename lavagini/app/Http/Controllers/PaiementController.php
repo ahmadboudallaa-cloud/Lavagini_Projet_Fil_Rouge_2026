@@ -10,16 +10,16 @@ class PaiementController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'commande_id' => 'required|exists:commandes,id',
             'montant' => 'required|numeric|min:0',
             'mode_paiement' => 'required|in:en_ligne,fin_service',
         ]);
 
         $paiement = Paiement::create([
-            'commande_id' => $request->commande_id,
-            'montant' => $request->montant,
-            'mode_paiement' => $request->mode_paiement,
+            'commande_id' => $validated['commande_id'],
+            'montant' => $validated['montant'],
+            'mode_paiement' => $validated['mode_paiement'],
             'statut' => 'en_attente',
         ]);
 
@@ -31,21 +31,14 @@ class PaiementController extends Controller
 
     public function valider(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'transaction_id' => 'nullable|string',
         ]);
 
         $paiement = Paiement::findOrFail($id);
-        $paiement->statut = 'valide';
-        $paiement->date_paiement = now();
-        $paiement->transaction_id = $request->transaction_id;
-        $paiement->save();
+        $this->markAsValide($paiement, $validated['transaction_id'] ?? null);
 
-        $commande = $paiement->commande;
-        $commande->statut = 'payee';
-        $commande->save();
-
-        $facture = (new FactureService())->genererFacture($paiement);
+        $facture = $this->genererFacture($paiement);
 
         return response()->json([
             'message' => 'Paiement valide et facture generee',
@@ -66,5 +59,22 @@ class PaiementController extends Controller
         $paiement = Paiement::with(['commande', 'facture'])->findOrFail($id);
 
         return response()->json($paiement);
+    }
+
+    private function markAsValide(Paiement $paiement, ?string $transactionId): void
+    {
+        $paiement->statut = 'valide';
+        $paiement->date_paiement = now();
+        $paiement->transaction_id = $transactionId;
+        $paiement->save();
+
+        $commande = $paiement->commande;
+        $commande->statut = 'payee';
+        $commande->save();
+    }
+
+    private function genererFacture(Paiement $paiement)
+    {
+        return (new FactureService())->genererFacture($paiement);
     }
 }

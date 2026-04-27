@@ -12,7 +12,7 @@ class CommandeController extends Controller
     // Créer une nouvelle commande (Client)
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'zone_id' => 'nullable|exists:zones_geographiques,id',
             'nombre_vehicules' => 'required|integer|min:1',
             'adresse_service' => 'required|string',
@@ -20,19 +20,21 @@ class CommandeController extends Controller
             'description' => 'nullable|string'
         ]);
 
+        $userId = Auth::id();
+
         $commande = Commande::create([
-            'client_id' => Auth::id(),
-            'zone_id' => $request->zone_id,
-            'nombre_vehicules' => $request->nombre_vehicules,
-            'adresse_service' => $request->adresse_service,
-            'mode_paiement' => $request->mode_paiement,
+            'client_id' => $userId,
+            'zone_id' => $validated['zone_id'] ?? null,
+            'nombre_vehicules' => $validated['nombre_vehicules'],
+            'adresse_service' => $validated['adresse_service'],
+            'mode_paiement' => $validated['mode_paiement'],
             'statut' => 'demande',
-            'description' => $request->description
+            'description' => $validated['description'] ?? null
         ]);
 
         // Créer une notification pour le client
         Notification::create([
-            'user_id' => Auth::id(),
+            'user_id' => $userId,
             'titre' => 'Commande créée',
             'message' => 'Votre demande de service a été enregistrée',
             'type' => 'commande'
@@ -71,19 +73,20 @@ class CommandeController extends Controller
     // Mettre à jour le statut d'une commande (Admin)
     public function updateStatut(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'statut' => 'required|in:demande,assignee,en_cours,terminee,payee'
         ]);
 
         $commande = Commande::findOrFail($id);
-        $commande->statut = $request->statut;
-        $commande->save();
+        $commande->update([
+            'statut' => $validated['statut']
+        ]);
 
         // Notification au client
         Notification::create([
             'user_id' => $commande->client_id,
             'titre' => 'Statut de commande mis à jour',
-            'message' => 'Votre commande est maintenant : ' . $request->statut,
+            'message' => 'Votre commande est maintenant : ' . $validated['statut'],
             'type' => 'commande'
         ]);
 
