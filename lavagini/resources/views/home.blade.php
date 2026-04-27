@@ -460,14 +460,68 @@
             
             .pricing-table-wrapper {
                 margin: 100px 15px 40px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 0 0 12px 12px;
+            }
+
+            .pricing-table-wrapper::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .pricing-table-wrapper::-webkit-scrollbar-track {
+                background: #1a1a1a;
+                border-radius: 4px;
+            }
+
+            .pricing-table-wrapper::-webkit-scrollbar-thumb {
+                background: var(--cyan);
+                border-radius: 4px;
+            }
+
+            .col {
+                min-width: 145px;
+            }
+
+            .col-services {
+                min-width: 200px;
             }
             
             .pill-header h4 {
-                font-size: 28px;
+                font-size: 24px;
             }
             
             .row-item {
-                font-size: 13px;
+                font-size: 12px;
+            }
+
+            /* Evite la coupure de la partie haute des tarifs sur tablette */
+            .pricing-table-wrapper {
+                align-items: flex-start;
+            }
+
+            .pill-header,
+            .header-services {
+                position: static;
+            }
+
+            .pill-header {
+                height: auto;
+                min-height: 78px;
+                border-radius: 16px 16px 0 0;
+                border-bottom: 1px solid rgba(255,255,255,0.25);
+                padding: 10px 8px 8px;
+            }
+
+            .header-services {
+                height: auto;
+                min-height: 78px;
+                font-size: 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.25);
+            }
+
+            .row-list {
+                padding-top: 6px;
             }
         }
         
@@ -615,6 +669,38 @@
                 height: 28px;
                 font-size: 11px;
             }
+
+            .pill-header,
+            .header-services {
+                position: static;
+            }
+
+            .pill-header {
+                top: auto;
+                height: auto;
+                min-height: 72px;
+                border-radius: 14px 14px 0 0;
+                padding: 8px 6px;
+            }
+
+            .header-services {
+                top: auto;
+                height: auto;
+                min-height: 72px;
+                font-size: 18px;
+            }
+
+            .pill-header h4 {
+                font-size: 20px;
+            }
+
+            .pill-header p {
+                font-size: 9px;
+            }
+
+            .row-list {
+                padding-top: 6px;
+            }
             
             .footer {
                 flex-direction: column;
@@ -758,6 +844,38 @@
             .col-services .row-item {
                 padding-left: 10px;
                 font-size: 10px;
+            }
+
+            .pill-header,
+            .header-services {
+                position: static;
+            }
+
+            .pill-header {
+                top: auto;
+                height: auto;
+                min-height: 66px;
+                border-radius: 12px 12px 0 0;
+                padding: 7px 5px;
+            }
+
+            .header-services {
+                top: auto;
+                height: auto;
+                min-height: 66px;
+                font-size: 16px;
+            }
+
+            .pill-header h4 {
+                font-size: 18px;
+            }
+
+            .pill-header p {
+                font-size: 8px;
+            }
+
+            .row-list {
+                padding-top: 4px;
             }
             
             .btn-reserve-container {
