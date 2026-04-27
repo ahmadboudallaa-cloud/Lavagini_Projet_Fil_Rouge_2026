@@ -272,7 +272,7 @@
             <a href="#" onclick="event.preventDefault(); showTab('commandes', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Commandes</a>
             <a href="#" onclick="event.preventDefault(); showTab('factures', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Mes Factures</a>
             <a href="/chat" class="menu-item {{ request()->is('chat*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">
-                <i class="fas fa-comments"></i> Messagerie
+                Messagerie
             </a>
             <a href="#" onclick="event.preventDefault(); showTab('profil', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4">Mon Profil</a>
         </nav>

@@ -245,7 +245,7 @@
         <nav class="flex flex-col w-full pr-4 space-y-2">
             <a href="/laveur/dashboard" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition {{ request()->is('laveur/dashboard') ? 'active' : '' }}">Mission</a>
             <a href="/chat" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition {{ request()->is('chat*') ? 'active' : '' }}">
-                <i class="fas fa-comments"></i> Messagerie
+                Messagerie
             </a>
             <a href="/profil" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4 {{ request()->is('profil') ? 'active' : '' }}">Mon Profil</a>
         </nav>

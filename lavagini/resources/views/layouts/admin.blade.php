@@ -254,7 +254,7 @@
             <a href="/admin/dashboard" onclick="handleNavigation(event, 'laveurs', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Laveurs</a>
             <a href="/admin/dashboard" onclick="handleNavigation(event, 'zones', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition">Zones</a>
             <a href="/chat" onclick="handleChatNavigation(event);" class="menu-item {{ request()->is('chat*') ? 'active' : '' }} py-3 pl-8 text-lg text-gray-300 hover:text-white transition">
-                <i class="fas fa-comments"></i> Messagerie
+                Messagerie
             </a>
             <a href="/admin/dashboard" onclick="handleNavigation(event, 'parametres', this);" class="menu-item py-3 pl-8 text-lg text-gray-300 hover:text-white transition mt-4">Paramètres</a>
         </nav>
