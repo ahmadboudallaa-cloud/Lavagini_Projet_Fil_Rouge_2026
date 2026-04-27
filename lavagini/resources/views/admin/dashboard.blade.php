@@ -19,6 +19,7 @@
         .text-4xl { font-size: 2rem !important; }
         .text-2xl { font-size: 1.5rem !important; }
         .grid-cols-5 { grid-template-columns: repeat(3, 1fr) !important; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
     }
     
     @media (max-width: 768px) {

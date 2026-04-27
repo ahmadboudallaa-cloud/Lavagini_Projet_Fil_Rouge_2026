@@ -9,6 +9,57 @@
     @media (max-width: 1024px) {
         .text-4xl { font-size: 2rem !important; }
         .text-2xl { font-size: 1.5rem !important; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+
+        #factures .facture-card {
+            padding: 1.25rem !important;
+        }
+
+        #factures .facture-row {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+
+        #factures .facture-left {
+            width: 100% !important;
+        }
+
+        #factures .facture-meta-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 0.75rem !important;
+        }
+
+        #factures .facture-right {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+        }
+
+        #factures .facture-amount {
+            text-align: left !important;
+        }
+
+        #factures .facture-download {
+            flex-shrink: 0 !important;
+        }
+
+        #factures .facture-download span {
+            white-space: nowrap !important;
+        }
+
+        #factures .facture-icon {
+            width: 100% !important;
+            max-width: 3.5rem !important;
+        }
+        
+        #factures .facture-amount-value {
+            font-size: 1.5rem !important;
+            line-height: 1.2 !important;
+        }
     }
     
     @media (max-width: 768px) {
@@ -33,25 +84,41 @@
         
         /* Commandes - Cartes responsive */
         #commandes .flex.justify-between,
-        #factures .flex.justify-between {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 1rem !important;
-        }
-        
         #commandes .grid,
         #factures .grid {
             grid-template-columns: 1fr !important;
         }
         
-        #factures .flex.items-center.space-x-6 {
+        #factures .facture-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+
+        #factures .facture-left {
             flex-direction: column !important;
             align-items: flex-start !important;
             width: 100% !important;
+            gap: 0.75rem !important;
+        }
+
+        #factures .facture-meta-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        #factures .facture-right {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            width: 100% !important;
+            gap: 0.75rem !important;
         }
         
-        #factures .text-right {
+        #factures .facture-amount {
             text-align: left !important;
+        }
+
+        #factures .facture-download {
+            width: 100% !important;
+            justify-content: center !important;
         }
         
         /* Profil responsive */
@@ -362,10 +429,10 @@
         
         <div class="space-y-5">
             @forelse(($factures ?? collect()) as $facture)
-            <div class="bg-dark-hover border-2 border-gray-700 rounded-2xl p-6 hover:border-cyan-custom transition duration-300">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-6 flex-1">
-                        <div class="bg-cyan-custom/20 p-4 rounded-xl">
+            <div class="facture-card bg-dark-hover border-2 border-gray-700 rounded-2xl p-6 hover:border-cyan-custom transition duration-300">
+                <div class="facture-row flex justify-between items-center">
+                    <div class="facture-left flex items-center space-x-6 flex-1">
+                        <div class="facture-icon bg-cyan-custom/20 p-4 rounded-xl">
                             <svg class="w-8 h-8 text-cyan-custom" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -373,7 +440,7 @@
                         
                         <div class="flex-1">
                             <h3 class="text-white text-xl font-bold mb-2">{{ $facture->numero_facture }}</h3>
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="facture-meta-grid grid grid-cols-3 gap-4">
                                 <div>
                                     <p class="text-gray-400 text-xs mb-1">Commande</p>
                                     <p class="text-white font-medium">#{{ str_pad($facture->commande_id, 3, '0', STR_PAD_LEFT) }}</p>
@@ -390,12 +457,12 @@
                         </div>
                     </div>
                     
-                    <div class="flex items-center space-x-6">
-                        <div class="text-right">
+                    <div class="facture-right flex items-center space-x-6">
+                        <div class="facture-amount text-right">
                             <p class="text-gray-400 text-sm mb-1">Montant</p>
-                            <p class="text-cyan-custom text-3xl font-bold">{{ number_format((float) ($facture->commande?->montant ?? $facture->montant_affiche ?? $facture->montant ?? 0), 2) }} DH</p>
+                            <p class="facture-amount-value text-cyan-custom text-3xl font-bold">{{ number_format((float) ($facture->commande?->montant ?? $facture->montant_affiche ?? $facture->montant ?? 0), 2) }} DH</p>
                         </div>
-                        <a href="/factures/{{ $facture->id }}/telecharger" class="bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
+                        <a href="/factures/{{ $facture->id }}/telecharger" class="facture-download bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition flex items-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>

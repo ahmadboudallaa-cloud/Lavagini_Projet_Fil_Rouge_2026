@@ -116,17 +116,56 @@
         
         /* Responsive */
         @media (max-width: 1024px) {
+            .burger-btn {
+                display: flex !important;
+            }
+
             aside {
-                width: 220px;
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 280px !important;
+                height: 100vh !important;
+                transform: translateX(-100%) !important;
+                z-index: 9999 !important;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.5) !important;
             }
-            
+
+            aside.active {
+                transform: translateX(0) !important;
+            }
+
             main {
-                margin-left: 220px !important;
+                margin-left: 0 !important;
+                width: 100% !important;
             }
-            
+
+            header {
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+            }
+
+            header h3 {
+                font-size: 0.95rem !important;
+            }
+
+            header .user-menu span {
+                display: none !important;
+            }
+
+            .px-10 {
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+            }
+
+            .notification-dropdown {
+                width: 280px !important;
+                right: 0 !important;
+            }
+
             aside nav a {
-                font-size: 1rem;
-                padding-left: 1.5rem;
+                font-size: 1.1rem !important;
+                padding-left: 2rem !important;
             }
         }
         
